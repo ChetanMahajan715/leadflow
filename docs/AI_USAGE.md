@@ -99,3 +99,21 @@ Declined, with reason:
 **Verified**
 - `npm test` 10/10 (also under UTC-7 and UTC+13), `tsc --noEmit` clean, `npm run lint` clean, `npm run build` succeeds.
 - `api.ts` run against the live backend: list (10 leads), 422 mapped to `name` / `follow_up_at`, 404 message, note saved with updated lead, and "Can't reach the server" with the API stopped.
+
+## Phase 7: Lead list
+
+**AI generated**
+- `components/` Button, StatusBadge, FollowUpChip, LeadCard, FilterChips, SearchBar, LeadList, Header; `app/page.tsx` with loading, empty, no-results and error states.
+
+**Problems found and fixed**
+- `Button` first combined a base `border-transparent` with a variant `border-line-strong`; with Tailwind the winner depends on CSS order, not class order. Each variant now sets its own border.
+- `next build` failed: Next.js 16 refuses `new Date()` while pre-building a Client Component. `now` now starts as `null` and is set in the browser.
+- ESLint's `react-hooks/set-state-in-effect` flagged the first fetching code. Rewritten with React's documented pattern: fetch inside the effect with `.then`, an `ignore` flag, and a `reloads` counter for "Try again".
+- Brand voice: filter chips use sentence case ("Proposal sent"); the badge stays uppercase.
+- The API-down banner uses neutral colours, not red, because the brand reserves red for overdue.
+
+**Verified in a real browser** (headless Microsoft Edge, already on Windows, driven over its DevTools protocol by a small script; nothing installed)
+- Light, dark and 375px phone width screenshots match the brand kit previews; chips wrap, notes clamp to one line.
+- Today's follow-ups pinned and sorted; overdue leads first in All leads with red border and chip; upcoming chips; won/lost faded.
+- Filter "Qualified" shows exactly the 2 qualified leads; search "an" (after the 250 ms debounce) shows the 4 matching names and chip counts update; "zzz" shows the no-results state and "Clear search and filter" restores all 10.
+- API stopped: banner "Can't reach the server..."; API restarted + "Try again": banner gone, 10 cards.
