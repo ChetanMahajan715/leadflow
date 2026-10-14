@@ -80,3 +80,22 @@ Declined, with reason:
 
 **Known limitation**
 - "Today" in the seed uses the server machine's timezone. Locally that is my timezone; in Docker the container's `TZ` decides it (set in Phase 10).
+
+## Phase 6: Frontend foundation
+
+**AI generated**
+- Scaffolded with `create-next-app` (Next.js 16.4, React 19.3, Tailwind 4, ESLint). Removed the template's placeholder files (Vercel logos, favicon.ico, template README).
+- `app/globals.css` (brand tokens + Tailwind mapping), `app/layout.tsx` (fonts), `app/icon.svg` (kit favicon), `components/icons.tsx` (12 kit icons), `components/Logo.tsx`, `lib/types.ts`, `lib/status.ts`, `lib/time.ts` + tests, `lib/api.ts`, `frontend/.env.example`.
+- Read the current Next.js and Tailwind docs (Context7 and the docs bundled with Next.js 16) before writing code.
+
+**Decisions and fixes**
+- Header logo drawn inline instead of using the wordmark SVG as an image: an SVG in `<img>` cannot use the page's web font, and inline colours follow light/dark tokens.
+- The scaffold's `.gitignore` ignored every `.env*` file including `.env.example`; added an exception.
+- `npm test` first pointed Node at a folder; changed to a glob.
+- TypeScript rejected `./time.ts` imports (needed by Node's test runner); enabled `allowImportingTsExtensions` (safe because Next.js never emits JS from tsc).
+- `ApiError` first used TypeScript "parameter properties", which Node's type-stripping cannot run; rewritten with plain fields (also easier to read).
+- `npm install` held back one install script (`unrs-resolver`, used by ESLint's import resolver). Lint works without it, so it stays blocked.
+
+**Verified**
+- `npm test` 10/10 (also under UTC-7 and UTC+13), `tsc --noEmit` clean, `npm run lint` clean, `npm run build` succeeds.
+- `api.ts` run against the live backend: list (10 leads), 422 mapped to `name` / `follow_up_at`, 404 message, note saved with updated lead, and "Can't reach the server" with the API stopped.
