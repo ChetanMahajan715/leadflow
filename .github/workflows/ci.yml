@@ -1,0 +1,61 @@
+# Runs on every push and pull request:
+# backend tests + lint, frontend tests + lint + types + build, and a full
+# `docker compose up --build` smoke test (API health, seeded leads, web page).
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv .venv --python 3.12
+      - run: uv pip install -r requirements.txt
+      - run: uv run ruff check .
+      - run: uv run pytest -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
+
+  docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp .env.example .env
+      - run: docker compose up -d --build
+      - name: Wait for the API and check the seeded data
+        run: |
+          for i in $(seq 1 60); do curl -fs http://localhost:8000/api/health && break; sleep 2; done
+          curl -fs http://localhost:8000/api/health
+          count=$(curl -fs http://localhost:8000/api/leads | python3 -c "import json,sys; print(len(json.load(sys.stdin)))")
+          echo "leads: $count"
+          test "$count" -ge 8
+      - name: Check the web app answers
+        run: |
+          for i in $(seq 1 30); do curl -fs -o /dev/null http://localhost:3000 && break; sleep 2; done
+          curl -fs http://localhost:3000 | grep -q "LeadFlow"
+      - name: Logs (on failure)
+        if: failure()
+        run: docker compose logs
+      - run: docker compose down -v
+        if: always()
