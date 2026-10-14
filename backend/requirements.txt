@@ -1,0 +1,33 @@
+# LeadFlow backend dependencies (install into backend/.venv with uv only):
+#   uv venv .venv --python 3.12
+#   uv pip install -r requirements.txt
+#
+# Non-Python tools needed to run the whole project:
+#   Python 3.11+ (tested on 3.12, uv can download it for you)
+#   uv 0.5+ (tested on 0.12)
+#   Node.js 20 LTS+ (tested on 24) and npm 10+
+#   Docker + Docker Compose v2 (only for `docker compose up`)
+#   Git
+#
+# Main frontend libraries (source of truth: frontend/package.json):
+#   next, react, react-dom, typescript, tailwindcss
+
+# Web/API
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+
+# Data
+sqlalchemy==2.1.4
+pydantic==2.14.1
+pydantic-settings==2.15.0
+psycopg[binary]==3.3.6
+
+# Config
+python-dotenv==1.2.4
+
+# Testing
+pytest==9.1.1
+httpx==0.28.1
+
+# Code quality
+ruff==0.17.0
