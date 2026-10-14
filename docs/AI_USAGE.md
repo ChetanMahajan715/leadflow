@@ -134,4 +134,4 @@ Declined, with reason:
 **AI mistakes and fixes**
 - Focus did not return to the card after closing. Cause found by testing: when a note moves the lead to the other section, React draws a new card, so the browser's built-in "return focus" points at a card that no longer exists. Fix: the page focuses the card by `data-lead-id` when the dialog closes.
 - The AI's test helper sent Enter without the key's text, so the first keyboard test failed for a test-tool reason, not an app bug; fixed the helper and re-ran.
-- Commit `baa5644` ("lead timeline dialog") includes `LeadDialog.tsx`, which imports `NoteForm` from the next commit. The app builds at that commit (nothing imports the dialog yet) but `tsc` would fail there. Flagged to me; not rewritten without my approval.
+- The first commit of the dialog included `LeadDialog.tsx`, which imports `NoteForm` from the following commit, so `tsc` failed at that commit (the app still built). With my approval the 4 unpushed commits were replayed with the note form first; the final code is identical and every commit now passes `tsc` and lint.
