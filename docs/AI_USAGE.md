@@ -67,3 +67,16 @@ Fixed, each with a failing test first:
 Declined, with reason:
 - Remove the `not_null` validator in `LeadUpdate` by loosening type hints: kept, explicit is easier to explain.
 - `seed_on_startup` unused: it is used in Phase 5.
+
+## Phase 5: Seed script
+
+**AI generated**
+- `backend/seed.py` (10 leads, 30 notes, every status, today/overdue/upcoming/none follow-ups), `tests/test_seed.py` (tests first), `SEED_ON_STARTUP` wiring in `app/main.py`.
+- Verified by hand: the CLI seeds 10 leads, refuses a second run, `--reset` twice still leaves 10 leads and 30 notes; with `SEED_ON_STARTUP=true` two server restarts still give 10 leads.
+
+**Changed after review**
+- The AI's first `main()` had tangled if/elif/else returns; simplified to: reset or refuse, then seed.
+- `ruff format` expanded the data table to almost 300 lines; wrapped it in `# fmt: off` / `# fmt: on` to keep one readable row per lead.
+
+**Known limitation**
+- "Today" in the seed uses the server machine's timezone. Locally that is my timezone; in Docker the container's `TZ` decides it (set in Phase 10).
