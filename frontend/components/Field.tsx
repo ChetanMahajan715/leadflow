@@ -3,7 +3,6 @@ import type { InputHTMLAttributes } from "react";
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   id: string;
   label: string;
-  required?: boolean;
   error?: string;
 };
 
@@ -28,7 +27,6 @@ export function Field({ id, label, required, error, ...inputProps }: Props) {
       </label>
       <input
         id={id}
-        aria-required={required}
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
         className="h-10 rounded-sm border border-line-strong bg-surface-raised px-3 text-sm text-ink placeholder:text-ink-muted aria-[invalid=true]:border-danger"

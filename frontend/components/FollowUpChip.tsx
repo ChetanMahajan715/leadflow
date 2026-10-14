@@ -10,19 +10,20 @@ const STYLES = {
 type Props = {
   at: string; // the follow-up time (UTC ISO string)
   state: FollowUpState;
+  now: Date;
   label?: string; // replaces the default text, e.g. in the timeline
 };
 
+function defaultText(at: string, state: FollowUpState, now: Date) {
+  if (state === "today") return `Follow up today, ${formatTime(at)}`;
+  if (state === "overdue") return `Overdue · ${formatDateTime(at, now)}`;
+  return formatDateTime(at, now);
+}
+
 // Commitments always show the exact time, never "in 3 hours".
-export function FollowUpChip({ at, state, label }: Props) {
+export function FollowUpChip({ at, state, now, label }: Props) {
   const { className, Icon } = STYLES[state];
-  const text =
-    label ??
-    {
-      today: `Follow up today, ${formatTime(at)}`,
-      overdue: `Overdue · ${formatDateTime(at)}`,
-      upcoming: formatDateTime(at),
-    }[state];
+  const text = label ?? defaultText(at, state, now);
 
   return (
     <span

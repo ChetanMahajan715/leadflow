@@ -65,7 +65,8 @@ export function followUpState(
 
 /**
  * Splits the list into the two sections on screen:
- * - today:  follow-up on today's date (even if the time has passed), earliest first
+ * - today:  follow-up on today's date (even if the time has passed), earliest first;
+ *           a won/lost lead whose time has passed is done, so it is not pinned
  * - others: everyone else, overdue first (most overdue at the top), then most recently active
  */
 export function splitLeads(leads: Lead[], now = new Date()): { today: Lead[]; others: Lead[] } {
@@ -73,7 +74,7 @@ export function splitLeads(leads: Lead[], now = new Date()): { today: Lead[]; ot
   const isOverdue = (l: Lead) => followUpState(l, now) === "overdue";
 
   const today = leads
-    .filter((l) => l.follow_up_at && isSameLocalDay(l.follow_up_at, now))
+    .filter((l) => l.follow_up_at && isSameLocalDay(l.follow_up_at, now) && followUpState(l, now) !== null)
     .sort((a, b) => time(a.follow_up_at) - time(b.follow_up_at));
 
   const others = leads

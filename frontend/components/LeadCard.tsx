@@ -54,7 +54,7 @@ export function LeadCard({ lead, now, onOpen }: Props) {
             {timeAgo(lead.last_note_at, now)}
           </span>
         )}
-        {lead.follow_up_at && state && <FollowUpChip at={lead.follow_up_at} state={state} />}
+        {lead.follow_up_at && state && <FollowUpChip at={lead.follow_up_at} state={state} now={now} />}
       </span>
     </button>
   );

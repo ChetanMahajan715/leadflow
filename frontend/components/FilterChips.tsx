@@ -1,17 +1,17 @@
 import { STATUSES } from "@/lib/status";
-import type { LeadStatus } from "@/lib/types";
+import type { Lead, LeadStatus } from "@/lib/types";
 
 export type StatusFilter = LeadStatus | "all";
 
 type Props = {
   value: StatusFilter;
-  counts: Record<StatusFilter, number>;
+  leads: Lead[]; // the leads the counts are for (already matched to the search)
   onChange: (value: StatusFilter) => void;
 };
 
 // Single-select: exactly one chip is pressed. Wraps onto a second line on
 // narrow screens instead of scrolling sideways.
-export function FilterChips({ value, counts, onChange }: Props) {
+export function FilterChips({ value, leads, onChange }: Props) {
   const options: { value: StatusFilter; label: string }[] = [{ value: "all", label: "All" }, ...STATUSES];
 
   return (
@@ -21,6 +21,8 @@ export function FilterChips({ value, counts, onChange }: Props) {
       </span>
       {options.map((option) => {
         const pressed = option.value === value;
+        const count =
+          option.value === "all" ? leads.length : leads.filter((l) => l.status === option.value).length;
         return (
           <button
             key={option.value}
@@ -34,7 +36,7 @@ export function FilterChips({ value, counts, onChange }: Props) {
             }`}
           >
             {option.label}
-            <span className="ml-1.5 font-medium opacity-75">{counts[option.value]}</span>
+            <span className="ml-1.5 font-medium opacity-75">{count}</span>
           </button>
         );
       })}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dialog } from "@/components/Dialog";
+import { Dialog, closeParentDialog } from "@/components/Dialog";
 import { NoteForm } from "@/components/NoteForm";
 import { Timeline } from "@/components/Timeline";
 import { CloseIcon, PhoneIcon } from "@/components/icons";
@@ -76,7 +76,11 @@ export function LeadDialog({ lead, onClose, onLeadChange }: Props) {
               {lead.phone}
             </p>
           )}
-          {statusError && <p className="mt-1 text-xs text-danger">{statusError}</p>}
+          {statusError && (
+            <p role="alert" className="mt-1 text-xs text-ink-muted">
+              {statusError}
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <select
@@ -92,15 +96,14 @@ export function LeadDialog({ lead, onClose, onLeadChange }: Props) {
               </option>
             ))}
           </select>
-          {/* A button inside <form method="dialog"> closes the dialog natively. */}
-          <form method="dialog">
-            <button
-              aria-label="Close"
-              className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-ink-muted hover:bg-surface-sunken hover:text-ink"
-            >
-              <CloseIcon size={20} />
-            </button>
-          </form>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={closeParentDialog}
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-ink-muted hover:bg-surface-sunken hover:text-ink"
+          >
+            <CloseIcon size={20} />
+          </button>
         </div>
       </div>
 
@@ -120,7 +123,7 @@ export function LeadDialog({ lead, onClose, onLeadChange }: Props) {
       </div>
 
       {/* Foot */}
-      <NoteForm leadId={lead.id} onSaved={noteSaved} />
+      <NoteForm leadId={lead.id} onSaved={noteSaved} disabled={discussions === null} />
     </Dialog>
   );
 }

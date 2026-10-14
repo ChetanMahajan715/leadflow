@@ -13,7 +13,6 @@ import { LeadDialog } from "@/components/LeadDialog";
 import { LeadList } from "@/components/LeadList";
 import { SearchBar } from "@/components/SearchBar";
 import { ApiError, api } from "@/lib/api";
-import { STATUSES } from "@/lib/status";
 import type { Lead } from "@/lib/types";
 
 export default function Home() {
@@ -72,8 +71,6 @@ export default function Home() {
 
   // Search applies first, so the chip counts show how many match the search.
   const searched = leads.filter((l) => l.name.toLowerCase().includes(debouncedSearch));
-  const counts = { all: searched.length } as Record<StatusFilter, number>;
-  for (const s of STATUSES) counts[s.value] = searched.filter((l) => l.status === s.value).length;
   const visible = filter === "all" ? searched : searched.filter((l) => l.status === filter);
 
   // The dialog shows the lead from `leads`, so it and the list never disagree.
@@ -82,7 +79,9 @@ export default function Home() {
   // Return keyboard focus to the lead's card. Looked up by id because saving a
   // note can move the card to the other section (React then draws a new one).
   function closeDialog() {
-    document.querySelector<HTMLElement>(`[data-lead-id="${openId}"]`)?.focus();
+    // If the card is hidden by the current filter, fall back to the search box.
+    const card = document.querySelector<HTMLElement>(`[data-lead-id="${openId}"]`);
+    (card ?? document.querySelector<HTMLElement>('input[type="search"]'))?.focus();
     setOpenId(null);
   }
 
@@ -113,9 +112,10 @@ export default function Home() {
         }
       />
       <main className="mx-auto flex max-w-[960px] flex-col gap-6 px-6 py-8">
+        <h1 className="sr-only">Leads</h1>
         <div className="flex flex-col gap-4">
           <SearchBar value={search} onChange={setSearch} />
-          <FilterChips value={filter} counts={counts} onChange={setFilter} />
+          <FilterChips value={filter} leads={searched} onChange={setFilter} />
         </div>
 
         {loading ? (

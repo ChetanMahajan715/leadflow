@@ -96,3 +96,15 @@ test("defaultFollowUpInputs suggests the next whole hour, in local time", () => 
   // 23:30 rolls over to tomorrow
   assert.deepEqual(defaultFollowUpInputs(new Date(2026, 9, 14, 23, 30)), { date: "2026-10-15", time: "00:00" });
 });
+
+test("a won/lost lead whose follow-up already passed today is not pinned", () => {
+  const { today, others } = splitLeads([lead(1, at(9), { status: "won" }), lead(2, at(15), { status: "lost" })], now);
+  assert.deepEqual(
+    today.map((l) => l.id),
+    [2], // later today: still pinned
+  );
+  assert.deepEqual(
+    others.map((l) => l.id),
+    [1],
+  );
+});

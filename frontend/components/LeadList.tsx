@@ -36,7 +36,7 @@ export function LeadList({ leads, now, onOpen }: Props) {
 
 function Section({ title, icon, children }: { title: string; icon?: ReactNode; children: ReactNode }) {
   return (
-    <section aria-label={title}>
+    <section>
       <h2 className="mb-3 flex items-center gap-1.5 text-[11px] leading-4 font-bold tracking-[0.08em] text-ink-muted uppercase">
         {icon}
         {title}

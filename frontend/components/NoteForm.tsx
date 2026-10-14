@@ -9,13 +9,14 @@ import type { DiscussionCreated } from "@/lib/types";
 type Props = {
   leadId: number;
   onSaved: (result: DiscussionCreated) => void;
+  disabled?: boolean; // true until the timeline has loaded, so a new note cannot be overwritten
 };
 
 const inputClass =
   "h-9 rounded-sm border border-line-strong bg-surface-raised px-3 text-sm text-ink disabled:opacity-50 aria-[invalid=true]:border-danger";
 
 // The form at the bottom of the lead dialog: a note, plus an optional follow-up.
-export function NoteForm({ leadId, onSaved }: Props) {
+export function NoteForm({ leadId, onSaved, disabled }: Props) {
   const [note, setNote] = useState("");
   const [withFollowUp, setWithFollowUp] = useState(false);
   const [date, setDate] = useState("");
@@ -109,6 +110,7 @@ export function NoteForm({ leadId, onSaved }: Props) {
           onChange={(e) => setDate(e.target.value)}
           disabled={!withFollowUp}
           aria-invalid={!!errors.followUp}
+          aria-describedby={errors.followUp ? "follow-up-error" : undefined}
           className={inputClass}
         />
         <input
@@ -118,13 +120,18 @@ export function NoteForm({ leadId, onSaved }: Props) {
           onChange={(e) => setTime(e.target.value)}
           disabled={!withFollowUp}
           aria-invalid={!!errors.followUp}
+          aria-describedby={errors.followUp ? "follow-up-error" : undefined}
           className={inputClass}
         />
-        <Button type="submit" variant="primary" disabled={saving} className="ml-auto">
+        <Button type="submit" variant="primary" disabled={saving || disabled} className="ml-auto">
           {saving ? "Saving…" : "Save note"}
         </Button>
       </div>
-      {errors.followUp && <p className="-mt-1 text-xs text-danger">{errors.followUp}</p>}
+      {errors.followUp && (
+        <p id="follow-up-error" className="-mt-1 text-xs text-danger">
+          {errors.followUp}
+        </p>
+      )}
       {errors.form && (
         <p role="alert" className="text-xs text-danger">
           {errors.form}

@@ -29,6 +29,7 @@ export function Timeline({ discussions, now }: Props) {
               <div className="mt-2">
                 <FollowUpChip
                   at={d.follow_up_at}
+                  now={now}
                   // Brand style if it is still ahead today; neutral otherwise (past ones were handled).
                   state={new Date(d.follow_up_at) > now && isSameLocalDay(d.follow_up_at, now) ? "today" : "upcoming"}
                   label={`Follow-up set for ${formatDateTime(d.follow_up_at, now)}`}

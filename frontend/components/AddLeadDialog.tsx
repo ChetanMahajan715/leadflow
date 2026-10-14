@@ -1,8 +1,8 @@
 "use client";
 
-import { type FormEvent, type MouseEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Button } from "@/components/Button";
-import { Dialog } from "@/components/Dialog";
+import { Dialog, closeParentDialog } from "@/components/Dialog";
 import { Field } from "@/components/Field";
 import { CloseIcon } from "@/components/icons";
 import { ApiError, api } from "@/lib/api";
@@ -12,10 +12,6 @@ type Props = {
   onClose: () => void;
   onCreated: (lead: Lead) => void;
 };
-
-// Closing through the <dialog> element (not just unmounting) lets the browser
-// return focus to the "Add lead" button.
-const closeDialog = (e: MouseEvent<HTMLElement>) => e.currentTarget.closest("dialog")?.close();
 
 export function AddLeadDialog({ onClose, onCreated }: Props) {
   const [name, setName] = useState("");
@@ -31,7 +27,11 @@ export function AddLeadDialog({ onClose, onCreated }: Props) {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAttempted(true);
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      // Move focus to the field so screen readers announce its error.
+      document.getElementById("lead-name")?.focus();
+      return;
+    }
 
     const form = e.currentTarget;
     setSaving(true);
@@ -59,7 +59,7 @@ export function AddLeadDialog({ onClose, onCreated }: Props) {
         <button
           type="button"
           aria-label="Close"
-          onClick={closeDialog}
+          onClick={closeParentDialog}
           className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-ink-muted hover:bg-surface-sunken hover:text-ink"
         >
           <CloseIcon size={20} />
@@ -109,7 +109,7 @@ export function AddLeadDialog({ onClose, onCreated }: Props) {
         </div>
 
         <div className="flex justify-end gap-2 border-t border-line px-5 py-4">
-          <Button variant="ghost" onClick={closeDialog}>
+          <Button variant="ghost" onClick={closeParentDialog}>
             Cancel
           </Button>
           <Button type="submit" variant="primary" disabled={saving}>
