@@ -1,0 +1,44 @@
+# docker compose up --build   ->   web on http://localhost:3000, API on http://localhost:8000
+# Settings come from .env (copy .env.example to .env first).
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      # $$ = a literal $, so the variable is read inside the container
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      SEED_ON_STARTUP: ${SEED_ON_STARTUP:-true}
+      TZ: ${TZ:-UTC}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy # wait until Postgres accepts connections
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata: # keeps the database between restarts; `docker compose down -v` deletes it
