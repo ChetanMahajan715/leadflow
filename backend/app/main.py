@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app import models  # noqa: F401  (registers the tables on Base)
 from app.config import settings
-from app.database import Base, engine
+from app.database import Base, SessionLocal, engine
 from app.routers import leads
 
 logger = logging.getLogger("leadflow")
@@ -16,6 +16,11 @@ logger = logging.getLogger("leadflow")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(engine)
+    if settings.seed_on_startup:
+        from seed import seed_if_empty  # backend/seed.py, next to the app folder
+
+        with SessionLocal() as db:
+            seed_if_empty(db)
     yield
 
 
