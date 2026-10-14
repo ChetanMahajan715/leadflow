@@ -33,6 +33,9 @@ class Lead(Base):
     )
 
     # Newest first, so discussions[0] is always the latest note.
+    # ponytail: selectin loads every note of every listed lead just to show the
+    # latest one; fine for a rep's few hundred leads, switch to a latest-note
+    # subquery if the list grows large.
     discussions: Mapped[list["Discussion"]] = relationship(
         back_populates="lead",
         cascade="all, delete-orphan",

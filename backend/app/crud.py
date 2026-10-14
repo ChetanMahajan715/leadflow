@@ -19,7 +19,8 @@ def list_leads(
     if status is not None:
         query = query.where(Lead.status == status)
     if search and search.strip():
-        query = query.where(Lead.name.ilike(f"%{search.strip()}%"))
+        # autoescape: a typed % or _ is matched literally, not as a wildcard
+        query = query.where(Lead.name.icontains(search.strip(), autoescape=True))
     return list(db.scalars(query))
 
 

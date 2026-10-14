@@ -6,8 +6,8 @@ from typing import Annotated, Any
 from pydantic import (
     AwareDatetime,
     BaseModel,
-    BeforeValidator,
     ConfigDict,
+    Field,
     StringConstraints,
     field_validator,
 )
@@ -15,24 +15,16 @@ from pydantic import (
 from app.models import LeadStatus
 
 
-def _blank_to_none(value: Any) -> Any:
-    """Optional text fields: treat "" or "   " as not given."""
-    if isinstance(value, str) and not value.strip():
-        return None
+def _clean_optional_text(value: Any) -> Any:
+    """Trim optional text; an empty or blank value means "not given" (None)."""
+    if isinstance(value, str):
+        value = value.strip()
+        return value or None
     return value
 
 
 Name = Annotated[
     str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)
-]
-# The length rule applies to the text only; None (not given) is always allowed.
-Company = Annotated[
-    Annotated[str, StringConstraints(strip_whitespace=True, max_length=100)] | None,
-    BeforeValidator(_blank_to_none),
-]
-Phone = Annotated[
-    Annotated[str, StringConstraints(strip_whitespace=True, max_length=30)] | None,
-    BeforeValidator(_blank_to_none),
 ]
 Note = Annotated[
     str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)
@@ -41,18 +33,27 @@ Note = Annotated[
 
 class LeadCreate(BaseModel):
     name: Name
-    company: Company = None
-    phone: Phone = None
+    company: str | None = Field(None, max_length=100)
+    phone: str | None = Field(None, max_length=30)
+
+    # mode="before": runs before the length check, so "   " becomes None first.
+    clean_optional_text = field_validator("company", "phone", mode="before")(
+        _clean_optional_text
+    )
 
 
 class LeadUpdate(BaseModel):
     """Every field is optional; only the fields sent are changed."""
 
     name: Name | None = None
-    company: Company = None
-    phone: Phone = None
+    company: str | None = Field(None, max_length=100)
+    phone: str | None = Field(None, max_length=30)
     status: LeadStatus | None = None
     follow_up_at: AwareDatetime | None = None
+
+    clean_optional_text = field_validator("company", "phone", mode="before")(
+        _clean_optional_text
+    )
 
     @field_validator("name", "status")
     @classmethod

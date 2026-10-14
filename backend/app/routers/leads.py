@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Path, Response
 from sqlalchemy.orm import Session
 
 from app import crud
@@ -21,7 +21,11 @@ router = APIRouter(prefix="/api/leads", tags=["leads"])
 DB = Annotated[Session, Depends(get_db)]
 
 
-def get_lead_or_404(lead_id: int, db: DB) -> Lead:
+# Ids are positive and must fit the database's 64-bit integer, else 422.
+LeadId = Annotated[int, Path(ge=1, le=2**63 - 1)]
+
+
+def get_lead_or_404(lead_id: LeadId, db: DB) -> Lead:
     """Loads the lead named in the URL, or stops the request with 404."""
     lead = crud.get_lead(db, lead_id)
     if lead is None:
@@ -65,7 +69,10 @@ def get_lead(lead: LeadFromUrl):
 )
 def update_lead(data: LeadUpdate, lead: LeadFromUrl, db: DB):
     """Change any of name, company, phone, status, follow_up_at. Fields left out
-    stay as they are. Send `"follow_up_at": null` to clear a follow-up."""
+    stay as they are. Send `"follow_up_at": null` to clear a follow-up.
+
+    Unlike logging a note, this accepts a past `follow_up_at`: it edits the
+    record as-is (useful for corrections and demo data)."""
     return crud.update_lead(db, lead, data)
 
 

@@ -24,6 +24,7 @@ def db():
 def client(db):
     """A TestClient whose requests use the test database instead of the real one."""
     app.dependency_overrides[get_db] = lambda: db
-    with TestClient(app) as c:
-        yield c
+    # Not `with TestClient(app)`: that would run the app's startup, which creates
+    # tables in the real database. The `db` fixture already made the test tables.
+    yield TestClient(app)
     app.dependency_overrides.clear()

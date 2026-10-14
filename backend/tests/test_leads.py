@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 from app.models import Lead, LeadStatus
 
 
@@ -48,10 +50,17 @@ def test_create_lead_rejects_too_long_fields(client):
 def test_list_leads_filters_by_status_and_searches_by_name(client, db):
     asha = make_lead(client)
     make_lead(client, name="Vikram Shah")
-    db.get(Lead, asha["id"]).status = LeadStatus.won
+    lead = db.get(Lead, asha["id"])
+    lead.status = LeadStatus.won
+    # Set the time explicitly: two writes in the same clock tick would tie.
+    lead.updated_at = datetime.now(UTC) + timedelta(minutes=1)
     db.commit()
 
-    assert [x["name"] for x in client.get("/api/leads").json()] != []
+    # most recently active first
+    assert [x["name"] for x in client.get("/api/leads").json()] == [
+        "Asha Rao",
+        "Vikram Shah",
+    ]
     assert [x["name"] for x in client.get("/api/leads?status=won").json()] == [
         "Asha Rao"
     ]
@@ -125,3 +134,10 @@ def test_delete_lead(client):
     assert r.content == b""
     assert client.get(f"/api/leads/{lead['id']}").status_code == 404
     assert client.delete(f"/api/leads/{lead['id']}").status_code == 404
+
+
+def test_search_treats_wildcards_as_plain_text(client):
+    make_lead(client, name="a_b")
+    make_lead(client, name="axb")
+    assert [x["name"] for x in client.get("/api/leads?search=_").json()] == ["a_b"]
+    assert client.get("/api/leads?search=%25").json() == []  # a literal %
