@@ -34,3 +34,17 @@ LeadFlow was built with Claude Code (model: Claude Opus 5.5) as a pair programme
 
 **Known, accepted**
 - pytest prints a deprecation warning from Starlette suggesting `httpx2` instead of `httpx` for `TestClient`. The master brief names `httpx`, it works, and the warning does not affect results.
+
+## Phase 3: Lead API
+
+**AI generated**
+- `app/schemas.py`, `app/crud.py`, `app/routers/leads.py`, tests `tests/test_leads.py` and `tests/test_errors.py` (tests first, seen failing, then implemented).
+
+**AI mistakes and fixes**
+- First version of the optional `company` / `phone` types put the length limit on `str | None` as a whole, so Pydantic tried to measure the length of `None` and crashed. The test `test_create_lead_trims_and_blanks_become_null` caught it; the limit now applies only to the `str` part.
+- First router used `= Depends(...)` defaults; ruff (B008) flagged them. Rewritten in the `Annotated[..., Depends(...)]` style that current FastAPI docs recommend.
+- Using `status` as both a query parameter name and the imported `fastapi.status` module was confusing, so the routes use the plain numbers 201 and 204.
+
+**Added beyond the plan**
+- A test that `PATCH {"name": null}` returns 422 (it would otherwise crash with 500).
+- A test that an unexpected crash returns `{"detail": "Internal server error"}` and leaks nothing.
