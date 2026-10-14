@@ -121,6 +121,11 @@
   --shadow-dialog: 0 24px 48px rgba(15, 27, 42, 0.22);
 }
 
+/* Let the browser draw its own controls (checkbox, date picker) in the matching theme. */
+:root {
+  color-scheme: light dark;
+}
+
 body {
   background: var(--surface);
   color: var(--ink);
@@ -142,4 +147,15 @@ body {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* Dialogs: fade + 8px rise over 200ms (brand motion rule). */
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.dialog-in[open] {
+  animation: dialog-in 200ms ease-out;
 }

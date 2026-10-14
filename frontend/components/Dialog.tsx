@@ -1,0 +1,39 @@
+"use client";
+
+import { type ReactNode, useEffect, useRef } from "react";
+
+type Props = {
+  labelledBy: string; // id of the element that names the dialog (its title)
+  onClose: () => void;
+  children: ReactNode;
+};
+
+// A modal built on the browser's own <dialog> element. showModal() gives us,
+// for free: the dimmed backdrop, focus kept inside the dialog, Esc to close,
+// and focus returned to the button that opened it when it closes.
+//
+// The parent mounts this component to open it and unmounts it in onClose.
+// Every way of closing (Esc, backdrop click, a close button inside a
+// <form method="dialog">) goes through the native close, which fires onClose.
+export function Dialog({ labelledBy, onClose, children }: Props) {
+  const ref = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    ref.current?.showModal();
+  }, []);
+
+  return (
+    <dialog
+      ref={ref}
+      aria-labelledby={labelledBy}
+      onClose={onClose}
+      // A click on the <dialog> element itself (not its content) is a click on the backdrop.
+      onClick={(e) => {
+        if (e.target === e.currentTarget) e.currentTarget.close();
+      }}
+      className="dialog-in m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-[640px] overflow-hidden rounded-lg border border-line bg-surface-raised p-0 text-ink shadow-dialog backdrop:bg-ink/45 backdrop:backdrop-blur-[2px]"
+    >
+      <div className="flex max-h-[calc(100dvh-2rem)] flex-col">{children}</div>
+    </dialog>
+  );
+}
