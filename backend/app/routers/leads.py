@@ -1,0 +1,74 @@
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Response
+from sqlalchemy.orm import Session
+
+from app import crud
+from app.database import get_db
+from app.models import Lead, LeadStatus
+from app.schemas import LeadCreate, LeadOut, LeadUpdate
+
+router = APIRouter(prefix="/api/leads", tags=["leads"])
+
+# "Give this route a database session."
+DB = Annotated[Session, Depends(get_db)]
+
+
+def get_lead_or_404(lead_id: int, db: DB) -> Lead:
+    """Loads the lead named in the URL, or stops the request with 404."""
+    lead = crud.get_lead(db, lead_id)
+    if lead is None:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    return lead
+
+
+# "Give this route the lead from the URL (404 if it does not exist)."
+LeadFromUrl = Annotated[Lead, Depends(get_lead_or_404)]
+
+NOT_FOUND = {404: {"description": "Lead not found"}}
+
+
+@router.get("", response_model=list[LeadOut], summary="List leads")
+def list_leads(db: DB, status: LeadStatus | None = None, search: str | None = None):
+    """All leads, most recently active first. Each lead includes its latest note.
+
+    - `status`: only leads with this status (422 if it is not a valid status)
+    - `search`: case-insensitive match anywhere in the name
+    """
+    return crud.list_leads(db, status, search)
+
+
+@router.post("", response_model=LeadOut, status_code=201, summary="Create a lead")
+def create_lead(data: LeadCreate, db: DB):
+    """Name is required; company and phone are optional. Status starts as `new`,
+    and a first note "Lead created via web form." is added to the timeline."""
+    return crud.create_lead(db, data)
+
+
+@router.get(
+    "/{lead_id}", response_model=LeadOut, responses=NOT_FOUND, summary="Get one lead"
+)
+def get_lead(lead: LeadFromUrl):
+    """One lead by id."""
+    return lead
+
+
+@router.patch(
+    "/{lead_id}", response_model=LeadOut, responses=NOT_FOUND, summary="Update a lead"
+)
+def update_lead(data: LeadUpdate, lead: LeadFromUrl, db: DB):
+    """Change any of name, company, phone, status, follow_up_at. Fields left out
+    stay as they are. Send `"follow_up_at": null` to clear a follow-up."""
+    return crud.update_lead(db, lead, data)
+
+
+@router.delete(
+    "/{lead_id}",
+    status_code=204,
+    response_class=Response,
+    responses=NOT_FOUND,
+    summary="Delete a lead",
+)
+def delete_lead(lead: LeadFromUrl, db: DB):
+    """Deletes the lead and all its discussions."""
+    crud.delete_lead(db, lead)

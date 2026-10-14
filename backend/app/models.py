@@ -40,6 +40,14 @@ class Lead(Base):
         lazy="selectin",
     )
 
+    @property
+    def last_note(self) -> str | None:
+        return self.discussions[0].note if self.discussions else None
+
+    @property
+    def last_note_at(self) -> datetime | None:
+        return self.discussions[0].created_at if self.discussions else None
+
 
 class Discussion(Base):
     __tablename__ = "discussions"

@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from app import models  # noqa: F401  (registers the tables on Base)
 from app.config import settings
 from app.database import Base, engine
+from app.routers import leads
 
 logger = logging.getLogger("leadflow")
 
@@ -43,3 +44,6 @@ async def unexpected_error(request: Request, exc: Exception):
 def health():
     """Returns `{"status": "ok"}` when the API is up."""
     return {"status": "ok"}
+
+
+app.include_router(leads.router)
