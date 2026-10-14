@@ -4,10 +4,11 @@
 // search) and passes pieces of it down to small components as props.
 
 import { type ReactNode, useEffect, useState } from "react";
+import { AddLeadDialog } from "@/components/AddLeadDialog";
 import { Button } from "@/components/Button";
 import { FilterChips, type StatusFilter } from "@/components/FilterChips";
 import { Header } from "@/components/Header";
-import { AlertIcon } from "@/components/icons";
+import { AlertIcon, PlusIcon } from "@/components/icons";
 import { LeadDialog } from "@/components/LeadDialog";
 import { LeadList } from "@/components/LeadList";
 import { SearchBar } from "@/components/SearchBar";
@@ -27,6 +28,7 @@ export default function Home() {
   const [now, setNow] = useState<Date | null>(null);
   const [reloads, setReloads] = useState(0); // bump to fetch again ("Try again")
   const [openId, setOpenId] = useState<number | null>(null); // lead shown in the dialog
+  const [adding, setAdding] = useState(false); // "Add lead" dialog open?
 
   // Fetch the leads when the page opens, and again whenever `reloads` changes.
   useEffect(() => {
@@ -84,6 +86,14 @@ export default function Home() {
     setOpenId(null);
   }
 
+  // A new lead goes straight into the list. Clear search and filter so it is visible.
+  function leadCreated(lead: Lead) {
+    setLeads((current) => [lead, ...current]);
+    setSearch("");
+    setFilter("all");
+    setNow(new Date());
+  }
+
   // Called with the lead as the API returned it after a note or status change.
   // Swapping it into `leads` re-renders the list at once, so the lead moves
   // into or out of "Today's follow-ups" with no reload.
@@ -94,7 +104,14 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header
+        action={
+          <Button variant="primary" onClick={() => setAdding(true)}>
+            <PlusIcon size={20} />
+            Add lead
+          </Button>
+        }
+      />
       <main className="mx-auto flex max-w-[960px] flex-col gap-6 px-6 py-8">
         <div className="flex flex-col gap-4">
           <SearchBar value={search} onChange={setSearch} />
@@ -131,6 +148,7 @@ export default function Home() {
         )}
       </main>
 
+      {adding && <AddLeadDialog onClose={() => setAdding(false)} onCreated={leadCreated} />}
       {openLead && <LeadDialog lead={openLead} onClose={closeDialog} onLeadChange={updateLead} />}
     </>
   );

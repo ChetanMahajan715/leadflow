@@ -20,6 +20,8 @@ export function Dialog({ labelledBy, onClose, children }: Props) {
 
   useEffect(() => {
     ref.current?.showModal();
+    // Start on the field marked data-autofocus, if any (e.g. the name in "Add lead").
+    ref.current?.querySelector<HTMLElement>("[data-autofocus]")?.focus();
   }, []);
 
   return (
