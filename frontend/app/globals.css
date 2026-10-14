@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/* LeadFlow design tokens, copied from leadflow-brand-kit/tokens.css.
+   Only change: --font-sans / --font-mono point at the fonts that next/font
+   loads in app/layout.tsx (--font-jakarta, --font-jetbrains).
+
+   These are plain (unlayered) CSS, so where a name matches a Tailwind theme
+   variable (--radius-sm/md/lg, --font-sans/mono) ours wins: `rounded-md` is
+   the brand's 10px and `font-mono` is JetBrains Mono. */
+:root {
+  --surface: #F5F7F9;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #EDF1F4;
+  --line: #DDE3E9;
+  --line-strong: #7D8B99;
+  --ink: #0F1B2A;
+  --ink-muted: #556373;
+  --brand: #0E6E73;
+  --brand-strong: #0A5357;
+  --brand-soft: #E2F3F2;
+  --on-brand: #FFFFFF;
+  --depth: #13324D;
+  --danger: #B42318;
+  --danger-soft: #FDECEA;
+  --status-new: #1D5FA8;
+  --status-new-soft: #E7F0FB;
+  --status-contacted: #8A5300;
+  --status-contacted-soft: #FDF1DC;
+  --status-qualified: #4338CA;
+  --status-qualified-soft: #ECEBFC;
+  --status-proposal: #8A2D8F;
+  --status-proposal-soft: #F7E8F8;
+  --status-won: #1E6B3A;
+  --status-won-soft: #E3F4E8;
+  --status-lost: #556373;
+  --status-lost-soft: #EEF1F4;
+  --focus-ring: var(--brand);
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, Menlo, monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(15, 27, 42, 0.06);
+  --shadow-hover: 0 4px 12px rgba(15, 27, 42, 0.10);
+  --shadow-dialog: 0 24px 48px rgba(15, 27, 42, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #0B131B;
+    --surface-raised: #121C26;
+    --surface-sunken: #070E14;
+    --line: #243241;
+    --line-strong: #5F7287;
+    --ink: #E8EEF4;
+    --ink-muted: #9AA8B7;
+    --brand: #3CC4B8;
+    --brand-strong: #6FDACF;
+    --brand-soft: #0F2D30;
+    --on-brand: #04161A;
+    --depth: #1E4566;
+    --danger: #FF8A80;
+    --danger-soft: #3A1412;
+    --status-new: #8CB8F0;
+    --status-new-soft: #122A44;
+    --status-contacted: #F2C26B;
+    --status-contacted-soft: #3A2A0C;
+    --status-qualified: #A9A3F5;
+    --status-qualified-soft: #211E4A;
+    --status-proposal: #E3A3E6;
+    --status-proposal-soft: #36163A;
+    --status-won: #7FD69E;
+    --status-won-soft: #10301C;
+    --status-lost: #9AA8B7;
+    --status-lost-soft: #1C2733;
+    --focus-ring: var(--brand);
+  }
+}
+
+/* Tailwind class names for the tokens, e.g. bg-brand, text-ink-muted,
+   text-status-won bg-status-won-soft, shadow-card. They read the variables
+   above, so dark mode switches automatically. */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --color-depth: var(--depth);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-status-new: var(--status-new);
+  --color-status-new-soft: var(--status-new-soft);
+  --color-status-contacted: var(--status-contacted);
+  --color-status-contacted-soft: var(--status-contacted-soft);
+  --color-status-qualified: var(--status-qualified);
+  --color-status-qualified-soft: var(--status-qualified-soft);
+  --color-status-proposal: var(--status-proposal);
+  --color-status-proposal-soft: var(--status-proposal-soft);
+  --color-status-won: var(--status-won);
+  --color-status-won-soft: var(--status-won-soft);
+  --color-status-lost: var(--status-lost);
+  --color-status-lost-soft: var(--status-lost-soft);
+  --shadow-card: 0 1px 2px rgba(15, 27, 42, 0.06);
+  --shadow-hover: 0 4px 12px rgba(15, 27, 42, 0.10);
+  --shadow-dialog: 0 24px 48px rgba(15, 27, 42, 0.22);
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+/* Brand rule: 2px focus ring with 2px offset on every interactive element. */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
