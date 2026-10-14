@@ -8,6 +8,7 @@ import { Button } from "@/components/Button";
 import { FilterChips, type StatusFilter } from "@/components/FilterChips";
 import { Header } from "@/components/Header";
 import { AlertIcon } from "@/components/icons";
+import { LeadDialog } from "@/components/LeadDialog";
 import { LeadList } from "@/components/LeadList";
 import { SearchBar } from "@/components/SearchBar";
 import { ApiError, api } from "@/lib/api";
@@ -25,6 +26,7 @@ export default function Home() {
   // render: Next.js prerenders this page at build time, when "now" is wrong.
   const [now, setNow] = useState<Date | null>(null);
   const [reloads, setReloads] = useState(0); // bump to fetch again ("Try again")
+  const [openId, setOpenId] = useState<number | null>(null); // lead shown in the dialog
 
   // Fetch the leads when the page opens, and again whenever `reloads` changes.
   useEffect(() => {
@@ -72,9 +74,22 @@ export default function Home() {
   for (const s of STATUSES) counts[s.value] = searched.filter((l) => l.status === s.value).length;
   const visible = filter === "all" ? searched : searched.filter((l) => l.status === filter);
 
-  function openLead(lead: Lead) {
-    // The timeline dialog is added in the next step (Phase 8).
-    console.info("open lead", lead.id);
+  // The dialog shows the lead from `leads`, so it and the list never disagree.
+  const openLead = leads.find((l) => l.id === openId);
+
+  // Return keyboard focus to the lead's card. Looked up by id because saving a
+  // note can move the card to the other section (React then draws a new one).
+  function closeDialog() {
+    document.querySelector<HTMLElement>(`[data-lead-id="${openId}"]`)?.focus();
+    setOpenId(null);
+  }
+
+  // Called with the lead as the API returned it after a note or status change.
+  // Swapping it into `leads` re-renders the list at once, so the lead moves
+  // into or out of "Today's follow-ups" with no reload.
+  function updateLead(updated: Lead) {
+    setLeads((current) => current.map((l) => (l.id === updated.id ? updated : l)));
+    setNow(new Date());
   }
 
   return (
@@ -112,9 +127,11 @@ export default function Home() {
             </Button>
           </EmptyState>
         ) : (
-          now && <LeadList leads={visible} now={now} onOpen={openLead} />
+          now && <LeadList leads={visible} now={now} onOpen={(lead) => setOpenId(lead.id)} />
         )}
       </main>
+
+      {openLead && <LeadDialog lead={openLead} onClose={closeDialog} onLeadChange={updateLead} />}
     </>
   );
 }

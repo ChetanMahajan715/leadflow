@@ -23,6 +23,7 @@ export function LeadCard({ lead, now, onOpen }: Props) {
   return (
     <button
       type="button"
+      data-lead-id={lead.id}
       onClick={() => onOpen(lead)}
       className={`block w-full cursor-pointer rounded-md border p-4 text-left shadow-card transition-shadow duration-150 ease-out hover:shadow-hover ${look} ${closed ? "opacity-[0.72]" : ""}`}
     >
