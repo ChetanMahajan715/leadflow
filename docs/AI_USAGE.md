@@ -48,3 +48,22 @@ LeadFlow was built with Claude Code (model: Claude Opus 5.5) as a pair programme
 **Added beyond the plan**
 - A test that `PATCH {"name": null}` returns 422 (it would otherwise crash with 500).
 - A test that an unexpected crash returns `{"detail": "Internal server error"}` and leaks nothing.
+
+## Phase 4: Discussions API + code review
+
+**AI generated**
+- Discussion schemas, `crud.add_discussion` with the follow-up rule, the two discussion routes, `tests/test_discussions.py` (tests first).
+- Added beyond the plan: a follow-up in the past is rejected with 422 when logging a note.
+
+**Code review (separate reviewer agent, verdict "with fixes", no critical issues)**
+Fixed, each with a failing test first:
+- 500 responses had no CORS headers (Starlette's catch-all handler runs outside the CORS middleware), so the browser would show a CORS error instead of the message. Replaced with an error-catching middleware placed inside CORS.
+- Search treated `%` and `_` as wildcards (`?search=_` matched everyone). Now uses `icontains(..., autoescape=True)`.
+- A lead id larger than 64 bits crashed with 500; now 422.
+- The test client ran app startup against the real database URL; it no longer does.
+- A weak list assertion (`!= []`) now checks the order. That stronger test was then flaky on Windows: two writes in the same clock tick tie on `updated_at`. The test now sets the time explicitly. The app itself was correct (ties fall back to id).
+- The optional company/phone types were hard to explain (nested `Annotated`); replaced with plain `Field(max_length=...)` plus one "trim, blank means None" validator.
+
+Declined, with reason:
+- Remove the `not_null` validator in `LeadUpdate` by loosening type hints: kept, explicit is easier to explain.
+- `seed_on_startup` unused: it is used in Phase 5.
