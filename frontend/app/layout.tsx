@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   description: "Every lead, every conversation, every follow-up, on time.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${jetbrains.variable} antialiased`}>
       <body>{children}</body>
