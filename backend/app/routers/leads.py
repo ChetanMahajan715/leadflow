@@ -6,7 +6,14 @@ from sqlalchemy.orm import Session
 from app import crud
 from app.database import get_db
 from app.models import Lead, LeadStatus
-from app.schemas import LeadCreate, LeadOut, LeadUpdate
+from app.schemas import (
+    DiscussionCreate,
+    DiscussionCreated,
+    DiscussionOut,
+    LeadCreate,
+    LeadOut,
+    LeadUpdate,
+)
 
 router = APIRouter(prefix="/api/leads", tags=["leads"])
 
@@ -72,3 +79,35 @@ def update_lead(data: LeadUpdate, lead: LeadFromUrl, db: DB):
 def delete_lead(lead: LeadFromUrl, db: DB):
     """Deletes the lead and all its discussions."""
     crud.delete_lead(db, lead)
+
+
+@router.get(
+    "/{lead_id}/discussions",
+    response_model=list[DiscussionOut],
+    responses=NOT_FOUND,
+    summary="Lead timeline",
+)
+def list_discussions(lead: LeadFromUrl):
+    """Every note logged for this lead, newest first."""
+    return lead.discussions
+
+
+@router.post(
+    "/{lead_id}/discussions",
+    response_model=DiscussionCreated,
+    status_code=201,
+    responses=NOT_FOUND,
+    summary="Log a discussion",
+)
+def add_discussion(data: DiscussionCreate, lead: LeadFromUrl, db: DB):
+    """Adds a note, with an optional follow-up (must be a future time with a timezone).
+
+    Follow-up rule: a note **with** `follow_up_at` sets the lead's follow-up to it.
+    A note **without** one clears the lead's follow-up if that time has already
+    passed (logging the note means the follow-up happened), otherwise keeps it.
+
+    Returns the new discussion **and the updated lead**, so the list can update
+    immediately.
+    """
+    discussion = crud.add_discussion(db, lead, data)
+    return {"discussion": discussion, "lead": lead}

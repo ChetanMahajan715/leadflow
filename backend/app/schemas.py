@@ -1,6 +1,6 @@
 """Pydantic models: what the API accepts (…Create / …Update) and returns (…Out)."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 from pydantic import (
@@ -76,3 +76,33 @@ class LeadOut(BaseModel):
     updated_at: datetime
     last_note: str | None
     last_note_at: datetime | None
+
+
+class DiscussionCreate(BaseModel):
+    note: Note
+    follow_up_at: AwareDatetime | None = None
+
+    @field_validator("follow_up_at")
+    @classmethod
+    def in_the_future(cls, value):
+        if value is not None and value <= datetime.now(UTC):
+            raise ValueError("Follow-up must be in the future.")
+        return value
+
+
+class DiscussionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    lead_id: int
+    note: str
+    follow_up_at: datetime | None
+    created_at: datetime
+
+
+class DiscussionCreated(BaseModel):
+    """Returned after adding a note: the note itself and the lead as it is now,
+    so the frontend can update its list without fetching again."""
+
+    discussion: DiscussionOut
+    lead: LeadOut
