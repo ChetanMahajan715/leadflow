@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { Lead, LeadStatus } from "./types.ts";
-import { followUpState, localInputsToIso, splitLeads, timeAgo } from "./time.ts";
+import { defaultFollowUpInputs, followUpState, localInputsToIso, splitLeads, timeAgo } from "./time.ts";
 
 // All dates are built in the machine's local time, like the browser does.
 const now = new Date(2026, 9, 14, 12, 0); // 14 Oct 2026, 12:00 local
@@ -89,4 +89,10 @@ test("timeAgo", () => {
 
 test("localInputsToIso turns the date and time inputs (local) into UTC", () => {
   assert.equal(localInputsToIso("2026-10-15", "14:30"), new Date(2026, 9, 15, 14, 30).toISOString());
+});
+
+test("defaultFollowUpInputs suggests the next whole hour, in local time", () => {
+  assert.deepEqual(defaultFollowUpInputs(new Date(2026, 9, 14, 12, 20)), { date: "2026-10-14", time: "13:00" });
+  // 23:30 rolls over to tomorrow
+  assert.deepEqual(defaultFollowUpInputs(new Date(2026, 9, 14, 23, 30)), { date: "2026-10-15", time: "00:00" });
 });

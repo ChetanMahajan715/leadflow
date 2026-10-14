@@ -91,3 +91,14 @@ export function splitLeads(leads: Lead[], now = new Date()): { today: Lead[]; ot
 export function localInputsToIso(date: string, time: string): string {
   return new Date(`${date}T${time}`).toISOString();
 }
+
+/** Starting values for the follow-up date/time inputs: the next whole hour, local time. */
+export function defaultFollowUpInputs(now = new Date()): { date: string; time: string } {
+  const next = new Date(now);
+  next.setHours(now.getHours() + 1, 0, 0, 0);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return {
+    date: `${next.getFullYear()}-${pad(next.getMonth() + 1)}-${pad(next.getDate())}`,
+    time: `${pad(next.getHours())}:00`,
+  };
+}
