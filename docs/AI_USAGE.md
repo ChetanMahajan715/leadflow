@@ -135,3 +135,29 @@ Declined, with reason:
 - Focus did not return to the card after closing. Cause found by testing: when a note moves the lead to the other section, React draws a new card, so the browser's built-in "return focus" points at a card that no longer exists. Fix: the page focuses the card by `data-lead-id` when the dialog closes.
 - The AI's test helper sent Enter without the key's text, so the first keyboard test failed for a test-tool reason, not an app bug; fixed the helper and re-ran.
 - The first commit of the dialog included `LeadDialog.tsx`, which imports `NoteForm` from the following commit, so `tsc` failed at that commit (the app still built). With my approval the 4 unpushed commits were replayed with the note form first; the final code is identical and every commit now passes `tsc` and lint.
+
+## Phase 9: Add lead dialog + frontend code review
+
+**AI generated**
+- `components/Field.tsx`, `components/AddLeadDialog.tsx`, the header "Add lead" button, `data-autofocus` support in `Dialog`.
+
+**Verified in the browser**
+- Opening puts focus in Full name. Empty save: "Name is required.", red border, `aria-invalid`, dialog stays open; blank spaces are rejected too.
+- Saving "Neha Joshi / Joshi Wealth Advisory": dialog closes, focus returns to "Add lead", the lead is in the list at once (after the overdue leads, as designed), All count 10 -> 11, and it is still there after a reload.
+- Cancel closes without saving. With an empty database the page shows "No leads yet. Add your first one to get started." and the first lead replaces it.
+
+**Code review (separate reviewer agent, verdict "with fixes", no critical issues)**
+Fixed:
+- A text selection started inside a dialog and released over the backdrop closed the dialog and lost the draft. Backdrop now closes on `mousedown`. Verified with real mouse events.
+- Follow-up errors were not linked to their inputs, and an empty name did not move focus, so screen readers said nothing. Fixed; added a hidden `<h1>`.
+- A won/lost lead whose follow-up passed earlier today was pinned in Today's section with no chip. Now excluded (test written first).
+- A note saved before the timeline finished loading could be overwritten; "Save note" is disabled until it loads.
+- Two different ways of closing a dialog from a button; now one helper, `closeParentDialog`.
+- Focus is lost if the lead's card is filtered out after closing; falls back to the search box.
+- "required" was announced twice; status-save error shown in neutral colours (red is for overdue and field errors).
+- Simplified the chip counts (no type cast) and the chip text.
+
+Declined, with reason:
+- Delete the three icons not used yet: the brief asks for all 12 kit icons as components.
+- Remove `ApiError.status`: it carries meaning (0 = server unreachable).
+- Tailwind wiring in `next.config.ts` differs from one docs page: it is exactly what `create-next-app` 16.4 generated, and `next build` works.
