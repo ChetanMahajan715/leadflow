@@ -117,3 +117,21 @@ Declined, with reason:
 - Today's follow-ups pinned and sorted; overdue leads first in All leads with red border and chip; upcoming chips; won/lost faded.
 - Filter "Qualified" shows exactly the 2 qualified leads; search "an" (after the 250 ms debounce) shows the 4 matching names and chip counts update; "zzz" shows the no-results state and "Clear search and filter" restores all 10.
 - API stopped: banner "Can't reach the server..."; API restarted + "Try again": banner gone, 10 cards.
+
+## Phase 8: Lead dialog
+
+**AI generated**
+- `components/Dialog.tsx` (native `<dialog>`), `LeadDialog.tsx`, `Timeline.tsx`, `NoteForm.tsx`; `defaultFollowUpInputs` in `lib/time.ts` (test first); dialog animation and `color-scheme` in `globals.css`; page wiring (`openId`, `updateLead`, `closeDialog`).
+
+**Verified in the browser** (headless Edge over DevTools protocol)
+- Opening a card shows the timeline newest first; focus moves into the dialog; Tab stays inside it.
+- Keyboard: focus a card, Enter opens, Esc closes and focus returns to the card.
+- Empty note: "Write a note first." Ticking "Set follow-up" suggests the next hour today.
+- Saving a note with a follow-up today: note on top of the timeline, form cleared, and the lead appears in "Today's follow-ups" without a reload.
+- Status changed to Qualified from the dialog; after reloading the page the badge still says Qualified.
+- Backdrop click and the X button close the dialog. Light and dark screenshots match the brand kit.
+
+**AI mistakes and fixes**
+- Focus did not return to the card after closing. Cause found by testing: when a note moves the lead to the other section, React draws a new card, so the browser's built-in "return focus" points at a card that no longer exists. Fix: the page focuses the card by `data-lead-id` when the dialog closes.
+- The AI's test helper sent Enter without the key's text, so the first keyboard test failed for a test-tool reason, not an app bug; fixed the helper and re-ran.
+- Commit `baa5644` ("lead timeline dialog") includes `LeadDialog.tsx`, which imports `NoteForm` from the next commit. The app builds at that commit (nothing imports the dialog yet) but `tsc` would fail there. Flagged to me; not rewritten without my approval.
