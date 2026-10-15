@@ -52,3 +52,25 @@ def test_seed_if_empty_only_seeds_an_empty_database(db):
     count = db.query(Lead).count()
     assert seed_if_empty(db) is False
     assert db.query(Lead).count() == count
+
+
+def test_todays_follow_ups_stay_distinct_late_in_the_evening(db):
+    # At 22:30 or 23:45 both "later today" follow-ups used to be capped to 23:59
+    # and tied. They must stay later today and in a fixed order (Priya first).
+    for hour, minute in ((22, 30), (23, 45)):
+        clear(db)
+        now = (
+            datetime.now()
+            .astimezone()
+            .replace(hour=hour, minute=minute, second=0, microsecond=0)
+        )
+        seed(db, now)
+        times = {
+            lead.name: lead.follow_up_at.astimezone(now.tzinfo)
+            for lead in db.query(Lead).filter(
+                Lead.name.in_(["Priya Menon", "Rahul Khanna"])
+            )
+        }
+        priya, rahul = times["Priya Menon"], times["Rahul Khanna"]
+        assert now < priya < rahul, (hour, minute, priya, rahul)
+        assert priya.date() == rahul.date() == now.date()

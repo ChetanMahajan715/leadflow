@@ -19,10 +19,12 @@ from app.database import Base, SessionLocal, engine
 from app.models import Discussion, Lead, LeadStatus
 
 
-def later_today(now: datetime, hours: int) -> datetime:
-    """`hours` from now, but never past 23:59 today (so it stays "today")."""
-    end_of_day = now.replace(hour=23, minute=59, second=0, microsecond=0)
-    when = min(now + timedelta(hours=hours), end_of_day)
+def later_today(now: datetime, hours: int, latest: str = "23:59") -> datetime:
+    """`hours` from now, but never past `latest` today (so it stays "today").
+    Different `latest` values keep two follow-ups apart late in the evening."""
+    h, m = map(int, latest.split(":"))
+    cap = now.replace(hour=h, minute=m, second=0, microsecond=0)
+    when = min(now + timedelta(hours=hours), cap)
     return when if when > now else now + timedelta(minutes=1)
 
 
@@ -30,8 +32,8 @@ def build_leads(now: datetime) -> list[Lead]:
     def ago(days=0, hours=0):
         return now - timedelta(days=days, hours=hours)
 
-    today_soon = later_today(now, 2)
-    today_evening = later_today(now, 5)
+    today_soon = later_today(now, 2, latest="23:30")
+    today_evening = later_today(now, 5, latest="23:59")
     overdue_1d = ago(days=1)
     overdue_3d = ago(days=3)
     tomorrow = now + timedelta(days=1)
