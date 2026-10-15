@@ -5,9 +5,8 @@ LeadFlow was built with Claude Code (model: Claude Opus 5.5) as a pair programme
 ## Phase 1: Plan
 
 **AI generated**
-- Read the assessment brief (`MASTER_PROMPT.md`), the brand kit and the wireframes; asked me clarifying questions.
-- Design spec: `docs/superpowers/specs/2026-10-14-leadflow-design.md`.
-- Implementation plan: `docs/PLAN.md`.
+- Read the assessment brief (my master prompt to the AI), the brand kit and the wireframes; asked me clarifying questions.
+- A design spec and a step-by-step implementation plan (my private working documents, not published).
 - `.gitignore`, `.gitattributes`, git repo setup.
 - A Graphify knowledge graph of the brand kit (`graphify-out/`, not committed).
 
@@ -179,7 +178,7 @@ Declined, with reason:
 ## Phase 11: Docs and delivery
 
 **AI generated**
-- `README.md` (all 12 sections from the brief), `docs/DEMO_SCRIPT.md`, 13 screenshots in `docs/screenshots/` (light, dark, mobile, every flow) taken from the running app with headless Edge.
+- `README.md` (all 12 sections from the brief), a demo script, 13 screenshots in `docs/screenshots/` (light, dark, mobile, every flow) taken from the running app with headless Edge.
 
 **Found and fixed while verifying**
 - Screenshots first showed "Can't reach the server": the terminal had the tools environment (`LeadFlow/.venv`) activated, so `uv run` used it instead of `backend/.venv`. Fixed by deactivating; the README now warns about this.

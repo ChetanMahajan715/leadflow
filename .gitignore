@@ -20,3 +20,6 @@ next-env.d.ts
 # Tools
 graphify-out/
 .DS_Store
+
+# Personal working documents (kept locally, not published)
+private/
