@@ -188,3 +188,10 @@ Declined, with reason:
 **Verified (final run)**
 - Backend: 35 tests pass, ruff clean, formatting clean. Frontend: 12 tests pass, `tsc` clean, lint clean, production build succeeds. `docker compose config` valid.
 - Fresh clone following the README: seed creates 10 leads, API and `/docs` respond, the browser shows 10 cards in both sections.
+
+## Phase 10, completed: Docker running
+
+- The next day Windows had updated itself to build 26300.9711. On that build the same `dism /enable-feature /featurename:VirtualMachinePlatform` (run by me in an admin PowerShell) reached 100% and completed: Windows Update now had the component. After a restart, `vmcompute` existed, WSL ran the `docker-desktop` distro and Docker's engine (29.8.2) came up.
+- Clean-state test: `docker compose down -v` then `docker compose up -d --build` (about 4.5 minutes for the first build). Order confirmed: `db` healthy, then `backend`, then `frontend`.
+- Verified: `/api/health` ok, `/docs` 200, web 200; Postgres holds 10 leads and 30 discussions (checked with `psql` inside the `db` container); the web app renders the seeded list with correct IST times (with `TZ=Asia/Kolkata` in my local `.env`); a lead added through the API is still there after `docker compose restart`, and the seed did not run twice.
+- The README note saying Docker could not run on my machine was replaced with these results.

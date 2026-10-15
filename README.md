@@ -31,7 +31,7 @@ All screenshots: [`docs/screenshots/`](docs/screenshots/). Demo video: _link to 
 **Bonus**
 - [x] Search leads by name (as you type)
 - [x] Overdue follow-ups highlighted in red
-- [x] Docker Compose setup (Postgres, API, web) - see the note in [Setup](#4-setup)
+- [x] Docker Compose setup (Postgres, API, web)
 - [x] Seed script with 10 leads and 2-5 discussions each
 - [x] Filters
 - [x] Light and dark mode, responsive down to phone width, keyboard accessible dialogs
@@ -67,7 +67,9 @@ docker compose up --build
 
 Open http://localhost:3000 (web) and http://localhost:8000/docs (API). The first start seeds 10 demo leads into Postgres (`SEED_ON_STARTUP=true`); data is kept in the `pgdata` volume. `docker compose down -v` deletes it.
 
-> **Honest note:** the Compose file is validated with `docker compose config`, and the GitHub Actions workflow builds the three images, starts them and checks the API, the seeded data and the web page on every push. It could not be run on my own laptop: Docker Desktop's engine needs the Windows "Virtual Machine Platform" component, which Windows Update failed to install on that machine (details in [`docs/AI_USAGE.md`](docs/AI_USAGE.md)).
+Tested from a clean state (`docker compose down -v`, then `up --build`): Postgres becomes healthy before the API starts, the API seeds 10 leads, the web app shows them, and data survives `docker compose restart`. The GitHub Actions workflow repeats this smoke test on every push.
+
+> Set `TZ` in `.env` to your timezone (e.g. `Asia/Kolkata`) so the demo's "later today" follow-ups fall on your today.
 
 ### Option B: run it manually
 
