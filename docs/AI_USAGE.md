@@ -194,3 +194,9 @@ Declined, with reason:
 - Clean-state test: `docker compose down -v` then `docker compose up -d --build` (about 4.5 minutes for the first build). Order confirmed: `db` healthy, then `backend`, then `frontend`.
 - Verified: `/api/health` ok, `/docs` 200, web 200; Postgres holds 10 leads and 30 discussions (checked with `psql` inside the `db` container); the web app renders the seeded list with correct IST times (with `TZ=Asia/Kolkata` in my local `.env`); a lead added through the API is still there after `docker compose restart`, and the seed did not run twice.
 - The README note saying Docker could not run on my machine was replaced with these results.
+
+## Final cleanup before publishing
+
+- Ran the full manual test plan (docs/TESTING.md) against the Docker setup: every check passed. It surfaced two time-of-day issues, both fixed: the demo's two "later today" follow-ups tied at 11:59 PM late in the evening (seed now caps them at 11:30 PM and 11:59 PM, with a test), and test-plan wording for checks run after 11 PM. It also showed that running the local setup and Docker at the same time sends requests to two different APIs; the test plan now warns about this.
+- Kept only what the submission needs in the public repo. My personal working documents (the prompt I gave the AI, the plan, the design spec, study notes, the demo script and the brief's wireframes) stay on my machine and were removed from the git history before the first push, with commit messages reworded to match what each commit contains. The final code is unchanged.
+- Rewrote the README for GitHub: logo, badges, screenshots, Mermaid diagrams, setup, API and test sections.
