@@ -306,8 +306,10 @@ Start with fresh demo data (see Stage 0) and open **http://localhost:3000**.
 ### 2.7 Adding a note updates the list immediately (email: the key flow)
 
 - [ ] **T2.17** Open **Meera Kapoor** (she is under All leads and has no follow-up). Type `Called her, demo booked`. Tick **Set follow-up**. Expected: the date and time boxes become active and show today's date and the next whole hour.
+
+  > **After 11 PM** the suggestion is midnight, which is tomorrow. For T2.19, change the time to one later today (e.g. `23:50`) before saving, or run this part before 11 PM.
 - [ ] **T2.18** Click **Save note**. Expected: the button briefly says `Saving…`, then your note appears at the top of the timeline with a `Follow-up set for ...` chip, and the text box empties.
-- [ ] **T2.19** Close the dialog. Expected: **Meera Kapoor is now in TODAY'S FOLLOW-UPS** with `Last note: Called her, demo booked` and `just now`, **without refreshing the page**.
+- [ ] **T2.19** Close the dialog. Expected (follow-up later today): **Meera Kapoor is now in TODAY'S FOLLOW-UPS** with `Last note: Called her, demo booked` and `just now`, **without refreshing the page**.
 
 ### 2.8 Status update persists (email)
 
@@ -448,4 +450,4 @@ This proves someone else can run the project.
 | 2. High level | T2.1 to T2.27 |  |  |
 | 3. Rigorous | T3.1 to T3.31 |  |  |
 
-When everything passes: stop the servers (Ctrl+C, or `docker compose down`), reset the demo data, record the video with [`DEMO_SCRIPT.md`](DEMO_SCRIPT.md), and push.
+When everything passes: stop the servers (Ctrl+C, or `docker compose down`), reset the demo data, record the video, and push.
