@@ -26,7 +26,7 @@ A single-screen lead manager for sales reps and advisors: track leads, log every
 
 ![LeadFlow: today's follow-ups pinned at the top, overdue leads in red](docs/screenshots/02-todays-followups-and-overdue.png)
 
-Built for the **PravarAI AI-smart full-stack intern assessment**. Demo video: _link to be added_.
+A full-stack project: Next.js frontend, FastAPI backend, PostgreSQL database and a one-command Docker setup. Demo video: _link to be added_.
 
 ## Features
 
@@ -232,17 +232,17 @@ LeadFlow/
 - **Native `<dialog>`**: focus trapping, Esc and the backdrop come from the browser, with no UI library.
 - **No state library**: React state plus one small API client is enough for one screen.
 
-## How AI was used
+## Development process and AI use
 
-Built with **Claude Code** as a pair programmer, phase by phase from a written plan: tests first on the backend, current library docs checked before writing code, two reviews by a separate reviewer agent, and every flow verified in a real browser. What the AI generated, what I decided or changed, and every mistake it made and how it was fixed are in **[`docs/AI_USAGE.md`](docs/AI_USAGE.md)**.
+I planned the project, made the design decisions, and reviewed and tested every part myself. I used an AI coding assistant (Claude Code) to speed up implementation, working phase by phase from a written plan: tests first on the backend, current library docs checked before writing code, code reviews after the backend and the frontend, and every flow verified in a real browser. What the AI produced, what I decided or changed, and the mistakes it made and how they were fixed are documented in **[`docs/AI_USAGE.md`](docs/AI_USAGE.md)**.
 
 ## Limitations and ideas
 
 - No login (optional in the brief). Next step: email/password login with a JWT.
 - The list loads all leads at once: fine for a rep's few hundred leads; larger lists would need pagination.
 - Tables are created on startup; a growing schema would need migrations (Alembic).
-- Ideas that fit PravarAI: an **AI summary** of a lead's discussions, a **suggested next action** and follow-up time from the latest notes, and a daily digest of today's and overdue follow-ups.
+- Ideas for advisors and wealth managers: an **AI summary** of a lead's discussions, a **suggested next action** and follow-up time from the latest notes, and a daily digest of today's and overdue follow-ups.
 
 ## Credits
 
-The interface follows the **LeadFlow brand kit** in [`leadflow-brand-kit/`](leadflow-brand-kit/): colours, typography (Plus Jakarta Sans, JetBrains Mono), icons and component rules. Layout inspired by the wireframes in the PravarAI assessment brief.
+The interface follows the **LeadFlow brand kit** in [`leadflow-brand-kit/`](leadflow-brand-kit/): colours, typography (Plus Jakarta Sans, JetBrains Mono), icons and component rules. Layout based on the wireframes in the project brief.

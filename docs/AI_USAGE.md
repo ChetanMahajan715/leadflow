@@ -1,11 +1,11 @@
-# AI usage log
+# Development process
 
-LeadFlow was built with Claude Code (model: Claude Opus 5.5) as a pair programmer. This file records, phase by phase, what the AI generated, what I (Chetan) reviewed or changed, and any mistakes the AI made and how they were fixed.
+How LeadFlow was built. I planned the work, made the decisions, and reviewed and tested every phase, using an AI coding assistant (Claude Code) to speed up implementation. Phase by phase, this file records what the AI produced, what I decided or changed, and the mistakes it made and how they were fixed.
 
 ## Phase 1: Plan
 
 **AI generated**
-- Read the assessment brief (my master prompt to the AI), the brand kit and the wireframes; asked me clarifying questions.
+- Read the project brief (my written instructions to the AI), the brand kit and the wireframes; asked me clarifying questions.
 - A design spec and a step-by-step implementation plan (my private working documents, not published).
 - `.gitignore`, `.gitattributes`, git repo setup.
 - A Graphify knowledge graph of the brand kit (`graphify-out/`, not committed).

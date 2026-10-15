@@ -5,7 +5,7 @@ A step-by-step plan to check LeadFlow by hand, from the lowest level up:
 | Stage | What it proves | Time |
 | --- | --- | --- |
 | [Stage 1: Low level](#stage-1-low-level-automated-checks-and-the-api) | The code passes its automated tests and the API answers every request correctly | ~15 min |
-| [Stage 2: High level](#stage-2-high-level-every-feature-in-the-browser) | Every feature in the assessment email works in the browser | ~20 min |
+| [Stage 2: High level](#stage-2-high-level-every-feature-in-the-browser) | Every required feature works in the browser | ~20 min |
 | [Stage 3: Rigorous](#stage-3-rigorous-edge-cases-accessibility-and-regression) | Edge cases, accessibility, dark/mobile, Docker and a fresh setup all hold up | ~30 min |
 
 Tick each box as you go. If a step does not give the **Expected** result, note the test ID and what you saw.
@@ -269,12 +269,12 @@ uv run uvicorn app.main:app --reload --port 8000
 
 Start with fresh demo data (see Stage 0) and open **http://localhost:3000**.
 
-### 2.1 Lead list (email: "name, status badge, last note, time ago")
+### 2.1 Lead list (requirement: "name, status badge, last note, time ago")
 
 - [ ] **T2.1** Look at any card. Expected: name in bold, company in grey, a coloured status badge top right, `Last note: ...` on one line, a clock icon with `2 days ago` style time.
 - [ ] **T2.2** Expected: 10 cards in total. Won (Daniel Okafor) and Lost (Kavita Desai) cards look faded.
 
-### 2.2 Today's follow-ups pinned (email: "pinned at the top")
+### 2.2 Today's follow-ups pinned (requirement: "pinned at the top")
 
 - [ ] **T2.3** Expected: a **TODAY'S FOLLOW-UPS** section at the top with a pin icon, containing Priya Menon and Rahul Khanna, teal background, bell chip `Follow up today, <time>`, earliest time first.
 - [ ] **T2.4** Expected: these two do **not** appear again under **ALL LEADS**.
@@ -284,7 +284,7 @@ Start with fresh demo data (see Stage 0) and open **http://localhost:3000**.
 - [ ] **T2.5** Expected: at the top of **ALL LEADS**, Vikram Shah then Ananya Iyer with a **red border** and a red chip `Overdue · <date, time>` (most overdue first).
 - [ ] **T2.6** Expected: upcoming follow-ups (Rohan Gupta, Sarah Thompson, Arjun Rao) show a grey calendar chip with date and time. No other card is red.
 
-### 2.4 Filters (email + bonus)
+### 2.4 Filters (required + bonus)
 
 - [ ] **T2.7** Expected counts on the chips: All 10, New 2, Contacted 2, Qualified 2, Proposal sent 2, Won 1, Lost 1.
 - [ ] **T2.8** Click **Qualified**. Expected: only Ananya Iyer and Sarah Thompson, the chip turns teal. Click **All** to go back.
@@ -296,14 +296,14 @@ Start with fresh demo data (see Stage 0) and open **http://localhost:3000**.
 - [ ] **T2.11** Type `zzz`. Expected: `No leads match your search or filter.` and a **Clear search and filter** button. Click it: all 10 leads come back.
 - [ ] **T2.12** Type `SHA` in capitals. Expected: Vikram Shah is found.
 
-### 2.6 Lead timeline dialog (email: "dialog, not a new page", "reverse chronological")
+### 2.6 Lead timeline dialog (requirement: "dialog, not a new page", "reverse chronological")
 
 - [ ] **T2.13** Click **Priya Menon**. Expected: a dialog opens over the dimmed list; the address bar still shows `localhost:3000/` (no new page).
 - [ ] **T2.14** Expected in the dialog head: name, company, phone in a monospace font, a status dropdown showing `Proposal sent`, and an X button.
 - [ ] **T2.15** Expected in the timeline: 3 notes, **newest at the top**, each with an exact time and relative time (e.g. `Oct 13, 3:00 PM · 2 days ago`). The top dot is teal. The note that set a follow-up shows a `Follow-up set for ...` chip.
 - [ ] **T2.16** Close it three ways, reopening in between: the **X**, the **Esc** key, and clicking the dark area outside. Expected: closes every time.
 
-### 2.7 Adding a note updates the list immediately (email: the key flow)
+### 2.7 Adding a note updates the list immediately (requirement: the key flow)
 
 - [ ] **T2.17** Open **Meera Kapoor** (she is under All leads and has no follow-up). Type `Called her, demo booked`. Tick **Set follow-up**. Expected: the date and time boxes become active and show today's date and the next whole hour.
 
@@ -311,12 +311,12 @@ Start with fresh demo data (see Stage 0) and open **http://localhost:3000**.
 - [ ] **T2.18** Click **Save note**. Expected: the button briefly says `Saving…`, then your note appears at the top of the timeline with a `Follow-up set for ...` chip, and the text box empties.
 - [ ] **T2.19** Close the dialog. Expected (follow-up later today): **Meera Kapoor is now in TODAY'S FOLLOW-UPS** with `Last note: Called her, demo booked` and `just now`, **without refreshing the page**.
 
-### 2.8 Status update persists (email)
+### 2.8 Status update persists (required)
 
 - [ ] **T2.20** Open **Arjun Rao**, change the dropdown to **Qualified**. Expected: it saves immediately (no save button), and after closing, his card badge says QUALIFIED and the Qualified chip count goes up by 1.
 - [ ] **T2.21** Press **F5** to reload the page. Expected: Arjun Rao is still **Qualified**.
 
-### 2.9 Add new lead (email)
+### 2.9 Add new lead (required)
 
 - [ ] **T2.22** Click **Add lead** (top right). Expected: a dialog with Full name (red `*`), Company `(optional)`, Phone `(optional)`; the cursor is already in Full name.
 - [ ] **T2.23** Click **Save lead** with everything empty. Expected: red border and `Name is required.` under Full name; dialog stays open.
