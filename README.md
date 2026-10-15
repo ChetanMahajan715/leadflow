@@ -1,79 +1,94 @@
-# LeadFlow
+<div align="center">
 
-**Every lead, every conversation, every follow-up, on time.**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="leadflow-brand-kit/assets/Logos/leadflow-wordmark-dark.svg">
+  <img src="leadflow-brand-kit/assets/Logos/leadflow-wordmark.svg" alt="LeadFlow" width="300">
+</picture>
 
-LeadFlow is a single-screen lead manager for a sales rep or advisor. It lists every lead with its status, latest note and how long ago it was logged; pins **today's follow-ups** at the top; highlights **overdue** ones in red; and opens each lead in a **timeline dialog** where the rep logs a discussion, sets the next follow-up and changes the status. Built for the PravarAI AI-smart full-stack intern assessment.
+### Every lead, every conversation, every follow-up, on time.
 
-![Lead list with today's follow-ups pinned and overdue leads in red](docs/screenshots/02-todays-followups-and-overdue.png)
+A single-screen lead manager for sales reps and advisors: track leads, log every discussion and never miss a follow-up.
 
-| Timeline dialog | Adding a note with a follow-up | List updates at once |
-| --- | --- | --- |
+![Next.js](https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React_19-20232A?logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-0E6E73?logo=tailwindcss&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?logo=docker&logoColor=white)
+
+[Features](#features) · [Quick start](#quick-start) · [How it works](#how-it-works) · [API](#api) · [Testing](#testing) · [Project structure](#project-structure)
+
+</div>
+
+---
+
+![LeadFlow: today's follow-ups pinned at the top, overdue leads in red](docs/screenshots/02-todays-followups-and-overdue.png)
+
+Built for the **PravarAI AI-smart full-stack intern assessment**. Demo video: _link to be added_.
+
+## Features
+
+### Required
+
+| | Feature |
+| :---: | --- |
+| ✅ | **Lead list**: name, status badge, last discussion note, time since that note |
+| ✅ | **Filter by status**: New, Contacted, Qualified, Proposal sent, Won, Lost, with counts |
+| ✅ | **Today's follow-ups pinned** at the top, earliest first |
+| ✅ | **Timeline dialog** (not a new page): full discussion history, newest first |
+| ✅ | **Log a discussion** with an optional follow-up date and time |
+| ✅ | **The list updates immediately** after saving: no reload, no extra request |
+| ✅ | **Status changes** from the dialog and persists |
+| ✅ | **Add a lead**: name required, company and phone optional, status starts as New |
+
+### Bonus
+
+| | Feature |
+| :---: | --- |
+| ✅ | **Search** leads by name as you type |
+| ✅ | **Overdue follow-ups in red** (never for Won or Lost leads) |
+| ✅ | **Docker Compose**: PostgreSQL + API + web app in one command |
+| ✅ | **Seed script**: 10 realistic leads with 30 discussions covering every status and follow-up state |
+| ✅ | **Filters** that apply to both sections |
+| ✅ | Light and dark mode, responsive down to phone width, keyboard accessible dialogs |
+| ✅ | GitHub Actions CI: tests, lint, type check, build and a Docker Compose smoke test |
+| ⬜ | Login (optional in the brief, not built) |
+
+## Screenshots
+
+| Timeline dialog | Logging a note with a follow-up | The list updates at once |
+| :---: | :---: | :---: |
 | ![Lead dialog](docs/screenshots/05-lead-dialog-timeline.png) | ![Note with follow-up](docs/screenshots/06-note-with-follow-up-before.png) | ![List updated](docs/screenshots/08-list-updated-immediately.png) |
-
-| Add lead validation | Dark mode | Mobile |
-| --- | --- | --- |
+| **Add lead with validation** | **Dark mode** | **Mobile** |
 | ![Add lead](docs/screenshots/10-add-lead-validation.png) | ![Dark mode](docs/screenshots/11-dark-mode.png) | ![Mobile](docs/screenshots/13-mobile.png) |
 
-All screenshots: [`docs/screenshots/`](docs/screenshots/). Demo video: _link to be added_. Demo script: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).
+More in [`docs/screenshots/`](docs/screenshots/).
 
-## 1. Features
+## Quick start
 
-**Required**
-- [x] Lead list: name, status badge, last discussion note, time since last discussion
-- [x] Filter by status (New / Contacted / Qualified / Proposal sent / Won / Lost), with counts
-- [x] Today's follow-ups pinned at the top, earliest first
-- [x] Click a lead to open a dialog (not a new page) with the full discussion history, newest first
-- [x] Form to add a note with an optional follow-up date and time
-- [x] Saving a note with a follow-up updates the lead's follow-up and the list immediately (no reload)
-- [x] Status can be changed from the dialog and persists
-- [x] Add a new lead: name required, company and phone optional, status defaults to New
+### Option A: Docker (one command)
 
-**Bonus**
-- [x] Search leads by name (as you type)
-- [x] Overdue follow-ups highlighted in red
-- [x] Docker Compose setup (Postgres, API, web)
-- [x] Seed script with 10 leads and 2-5 discussions each
-- [x] Filters
-- [x] Light and dark mode, responsive down to phone width, keyboard accessible dialogs
-- [x] CI on GitHub Actions: tests, lint, type check, build and a Docker Compose smoke test
-- [ ] Login (optional; not built)
-
-## 2. Tech stack and why
-
-| Layer | Choice | Why |
-| --- | --- | --- |
-| Frontend | Next.js 16 (App Router), React 19, TypeScript | The stack PravarAI prefers; TypeScript catches mistakes in API data shapes early |
-| Styling | Tailwind CSS 4 + the LeadFlow brand tokens | Brand colours, spacing and dark mode come from one set of CSS variables |
-| Backend | FastAPI (Python 3.12) | Preferred stack; request validation and `/docs` come for free |
-| Data | SQLAlchemy 2 + Pydantic v2 | Typed models; Pydantic gives clear 422 messages per field |
-| Database | SQLite locally, PostgreSQL in Docker | Zero setup for development; a real server database in Compose. Only `DATABASE_URL` changes |
-| Tests | pytest (backend), Node's built-in test runner (frontend rules) | No extra test frameworks needed |
-| Tooling | uv (Python env), npm, ruff, ESLint | uv keeps every Python package inside `backend/.venv` |
-
-No state-management or UI component libraries: React state plus one small API client, and the browser's native `<dialog>`.
-
-## 3. Requirements
-
-Python 3.11+ (uv can install it for you), [uv](https://docs.astral.sh/uv/), Node.js 20.9+ with npm, Git. Docker + Docker Compose only for option A. Exact Python versions: [`backend/requirements.txt`](backend/requirements.txt); frontend: [`frontend/package.json`](frontend/package.json).
-
-## 4. Setup
-
-### Option A: Docker Compose
+Requires Docker Desktop.
 
 ```bash
 cp .env.example .env          # Windows PowerShell: Copy-Item .env.example .env
 docker compose up --build
 ```
 
-Open http://localhost:3000 (web) and http://localhost:8000/docs (API). The first start seeds 10 demo leads into Postgres (`SEED_ON_STARTUP=true`); data is kept in the `pgdata` volume. `docker compose down -v` deletes it.
+| Open | |
+| --- | --- |
+| http://localhost:3000 | the app |
+| http://localhost:8000/docs | interactive API docs |
 
-Tested from a clean state (`docker compose down -v`, then `up --build`): Postgres becomes healthy before the API starts, the API seeds 10 leads, the web app shows them, and data survives `docker compose restart`. The GitHub Actions workflow repeats this smoke test on every push.
+The first start creates the database and seeds 10 demo leads. Data is kept in a Docker volume; `docker compose down -v` deletes it. Set `TZ` in `.env` to your timezone (e.g. `Asia/Kolkata`) so the demo's "later today" follow-ups fall on your today.
 
-> Set `TZ` in `.env` to your timezone (e.g. `Asia/Kolkata`) so the demo's "later today" follow-ups fall on your today.
+### Option B: run it locally
 
-### Option B: run it manually
+Requires Python 3.11+ with [uv](https://docs.astral.sh/uv/), and Node.js 20.9+.
 
-**Backend** (terminal 1):
+**API** (terminal 1):
 
 ```bash
 cd backend
@@ -84,11 +99,7 @@ uv run python seed.py              # 10 demo leads (add --reset to start over)
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
-API on http://localhost:8000, interactive docs on http://localhost:8000/docs.
-
-> If another Python virtual environment is active in your terminal, run `deactivate` first: `uv run` prefers an active environment over `backend/.venv`.
-
-**Frontend** (terminal 2):
+**Web app** (terminal 2):
 
 ```bash
 cd frontend
@@ -97,105 +108,141 @@ cp .env.example .env.local         # Windows: Copy-Item .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000.
+> Use one option at a time: both use ports 3000 and 8000. If another Python virtual environment is active in your terminal, run `deactivate` first, because `uv run` prefers an active environment.
 
-## 5. Environment variables
+## How it works
 
-| Variable | Used by | Example | Meaning |
-| --- | --- | --- | --- |
-| `DATABASE_URL` | backend | `sqlite:///./leadflow.db` | SQLAlchemy URL. Compose builds a Postgres URL from the `POSTGRES_*` values |
-| `CORS_ORIGINS` | backend | `http://localhost:3000` | Comma-separated origins allowed to call the API |
-| `SEED_ON_STARTUP` | backend | `true` | Seed demo data when the API starts and the database is empty |
-| `TZ` | backend (Compose) | `Asia/Kolkata` | Timezone the seed script uses for "today"; the UI always uses the browser's timezone |
-| `NEXT_PUBLIC_API_URL` | frontend | `http://localhost:8000` | API address as the browser sees it; baked in at build time |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | Compose `db` | `leadflow` / `change-me` / `leadflow` | Postgres credentials and database name |
+```mermaid
+flowchart LR
+    B["Browser<br/>Next.js app :3000"] -- "fetch JSON" --> A["FastAPI :8000<br/>routes, validation"]
+    A --> C["crud.py<br/>follow-up rule"]
+    C --> D[("SQLite locally<br/>PostgreSQL in Docker")]
+```
 
-All are listed with comments in [`.env.example`](.env.example) (plus `backend/.env.example` and `frontend/.env.example` for the manual setup). Real `.env` files are git-ignored.
+**One screen, one state.** `app/page.tsx` keeps the leads in React state and every request goes through `lib/api.ts`. The timeline and the add-lead form are native `<dialog>` elements over the list.
 
-## 6. API
+**"Updates immediately".** Saving a note returns the new note **and** the updated lead. The page swaps that lead into its state, React redraws, and the card moves between sections:
 
-Interactive docs with descriptions for every endpoint: **http://localhost:8000/docs**.
+```mermaid
+sequenceDiagram
+    participant U as Rep
+    participant UI as LeadDialog
+    participant P as page.tsx (state)
+    participant API as FastAPI
+    U->>UI: Save note + follow-up today
+    UI->>API: POST /api/leads/{id}/discussions
+    API-->>UI: 201 {discussion, lead}
+    UI->>UI: note added to the top of the timeline
+    UI->>P: onLeadChange(lead)
+    P->>P: replace the lead in state, re-render
+    Note over P: card moves into "Today's follow-ups"
+```
+
+**Follow-up rules.**
+
+| Situation | Result |
+| --- | --- |
+| Note saved **with** a follow-up | The lead's follow-up becomes that time (it must be in the future) |
+| Note saved **without** one, follow-up time already **passed** | Follow-up cleared: the rep followed up |
+| Note saved **without** one, follow-up in the **future** | Follow-up kept |
+| Follow-up time has passed | **Overdue**: red border and chip (never for Won or Lost) |
+| Follow-up on today's date | Pinned in **Today's follow-ups**, earliest first |
+
+All times are stored in UTC and shown in the browser's own timezone.
+
+## API
+
+Interactive docs at **http://localhost:8000/docs**.
 
 | Method | Path | Purpose | Success | Errors |
-| --- | --- | --- | --- | --- |
-| GET | `/api/health` | Health check | 200 | |
-| GET | `/api/leads?status=&search=` | List leads (each with `last_note`, `last_note_at`, `follow_up_at`); optional status filter and case-insensitive name search | 200 | 422 unknown status |
-| POST | `/api/leads` | Create a lead (name required, status `new`, first note "Lead created via web form.") | 201 | 422 |
-| GET | `/api/leads/{id}` | One lead | 200 | 404, 422 bad id |
-| PATCH | `/api/leads/{id}` | Update status or other fields (only the fields sent change) | 200 | 404, 422 |
-| DELETE | `/api/leads/{id}` | Delete a lead and its notes | 204 | 404 |
-| GET | `/api/leads/{id}/discussions` | Timeline, newest first | 200 | 404 |
-| POST | `/api/leads/{id}/discussions` | Add a note with optional future `follow_up_at`; returns `{discussion, lead}` | 201 | 404, 422 |
+| --- | --- | --- | :---: | :---: |
+| `GET` | `/api/health` | Health check | 200 | |
+| `GET` | `/api/leads?status=&search=` | List leads with their latest note; optional status filter and name search | 200 | 422 |
+| `POST` | `/api/leads` | Create a lead | 201 | 422 |
+| `GET` | `/api/leads/{id}` | One lead | 200 | 404, 422 |
+| `PATCH` | `/api/leads/{id}` | Update status or other fields (only the fields sent change) | 200 | 404, 422 |
+| `DELETE` | `/api/leads/{id}` | Delete a lead and its notes | 204 | 404 |
+| `GET` | `/api/leads/{id}/discussions` | Timeline, newest first | 200 | 404 |
+| `POST` | `/api/leads/{id}/discussions` | Add a note with an optional follow-up; returns `{discussion, lead}` | 201 | 404, 422 |
 
-Errors always use one shape: `{"detail": "Lead not found"}`, or for validation a list of `{loc, msg}` per field. Unexpected errors return `{"detail": "Internal server error"}` (500); the real error is only logged.
+Errors always look like `{"detail": "Lead not found"}`; validation errors list the field (`loc`) and message. Unexpected errors return a generic 500 and are only logged on the server.
 
-## 7. Project structure
+## Environment variables
 
-```
-backend/
-  app/
-    main.py          app, CORS, error handling, startup (tables + optional seed)
-    config.py        settings from environment / .env
-    database.py      engine, session, UTC datetime type
-    models.py        Lead, Discussion
-    schemas.py       request/response models and validation
-    crud.py          database operations and the follow-up rule
-    routers/leads.py all /api/leads endpoints
-  seed.py            demo data (CLI: --reset)
-  tests/             pytest: endpoints, follow-up rule, seed, errors
-frontend/
-  app/               layout.tsx (fonts), page.tsx (the one screen), globals.css (brand tokens), icon.svg
-  components/        Header, SearchBar, FilterChips, LeadList, LeadCard, StatusBadge, FollowUpChip,
-                     Dialog, LeadDialog, Timeline, NoteForm, AddLeadDialog, Field, Button, Logo, icons
-  lib/               api.ts, types.ts, status.ts, time.ts (+ time.test.ts)
-docs/                PLAN.md, LEARNING_NOTES.md, AI_USAGE.md, DEMO_SCRIPT.md, screenshots/
-leadflow-brand-kit/  the brand kit the UI follows
-docker-compose.yml, .env.example, .github/workflows/ci.yml
-```
+| Variable | Used by | Example | Purpose |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | API | `sqlite:///./leadflow.db` | Database URL (Docker builds a PostgreSQL URL itself) |
+| `CORS_ORIGINS` | API | `http://localhost:3000` | Origins allowed to call the API |
+| `SEED_ON_STARTUP` | API | `true` | Seed demo data when the database is empty |
+| `TZ` | API (Docker) | `Asia/Kolkata` | Timezone the seed uses for "today" |
+| `NEXT_PUBLIC_API_URL` | web app | `http://localhost:8000` | API address as the browser sees it (set at build time) |
+| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | Docker | `leadflow` / `change-me` / `leadflow` | PostgreSQL credentials |
 
-## 8. Design decisions
+Every variable is listed with a comment in [`.env.example`](.env.example), plus [`backend/.env.example`](backend/.env.example) and [`frontend/.env.example`](frontend/.env.example) for Option B. Real `.env` files are never committed.
 
-**Follow-up rule.** Saving a note *with* a follow-up sets the lead's follow-up. Saving a note *without* one clears the lead's follow-up if its time has already passed (logging the note means the rep followed up) and keeps a future one. So a lead is **overdue** exactly when its follow-up time is in the past. A follow-up in the past is rejected when logging a note. Won and Lost leads are never overdue.
-
-**Sections.** "Today's follow-ups" holds leads whose follow-up falls on today's date in the browser's timezone, earliest first; one whose time has already passed stays there in red. "All leads" shows overdue leads first (most overdue on top), then the most recently active. Overdue leads stay in "All leads" rather than a third section, because the wireframes and brand kit define only these two sections.
-
-**Timezones.** Everything is stored and sent in UTC. The browser converts to the user's local time (`Intl` / `Date`), nothing is hard-coded to India. The date and time inputs are read as local time and converted to UTC before sending.
-
-**"Updates immediately".** Adding a note returns `{discussion, lead}`. The page swaps that lead into its React state, re-renders, and the card moves between sections without a reload or a second request. The dialog reads the lead from the same state, so they never disagree.
-
-**Search.** Done in the browser, 250 ms after typing stops: all leads are already loaded for the filter counts, so it is instant and the counts match. The API also supports `?search=` and `?status=` (tested).
-
-**SQLite locally, Postgres in Docker.** SQLite needs no setup for development and tests; Postgres is the realistic server database. Timestamps use a small SQLAlchemy type that stores UTC and returns timezone-aware values, so both behave the same.
-
-**Dialogs.** The browser's native `<dialog>` with `showModal()` gives focus trapping, Esc to close and the backdrop without a library. Focus returns to the lead's card on close.
-
-## 9. Running tests
-
-A full manual test plan (low level, high level, edge cases, Docker) with copy-ready commands is in [`docs/TESTING.md`](docs/TESTING.md).
+## Testing
 
 ```bash
-cd backend
-uv run pytest            # 35 tests: every endpoint, status codes, validation, follow-up rule, seed
-uv run ruff check .
-
-cd ../frontend
-npm test                 # 12 tests: today / overdue / upcoming rules, sorting, time formatting
-npm run lint
-npx tsc --noEmit
+cd backend && uv run pytest     # 36 tests: every endpoint, status codes, validation, follow-up rules, seed
+cd frontend && npm test         # 12 tests: today / overdue / upcoming rules, sorting, time formatting
 ```
 
-## 10. How AI was used
+Lint and types: `uv run ruff check .`, `npm run lint`, `npx tsc --noEmit`. CI runs all of this plus a Docker Compose smoke test on every push ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
-Built with Claude Code (Claude Opus 5.5) as a pair programmer, following a written plan ([`docs/PLAN.md`](docs/PLAN.md)) phase by phase: tests first for the backend, a check of current library docs before writing code, a review by a separate reviewer agent after the backend and after the frontend, and in-browser checks of every flow. Every phase, what the AI generated, what I decided or changed, and every mistake it made and how it was fixed are logged in [`docs/AI_USAGE.md`](docs/AI_USAGE.md). [`docs/LEARNING_NOTES.md`](docs/LEARNING_NOTES.md) explains each concept and where it is in the code.
+A full manual test plan (API by hand, every feature in the browser, edge cases, keyboard, dark mode, mobile, Docker, fresh setup) with copy-ready commands: **[`docs/TESTING.md`](docs/TESTING.md)**.
 
-## 11. Known limitations and ideas
+## Project structure
 
-- No login (optional in the brief). Next step: email/password with a seeded demo user and JWT.
-- The list loads every lead and its notes at once; fine for a rep's few hundred leads, would need pagination and a "latest note" query beyond that.
+```
+LeadFlow/
+├── backend/                    FastAPI API
+│   ├── app/
+│   │   ├── main.py             app setup, CORS, error handling, startup
+│   │   ├── config.py           settings from environment / .env
+│   │   ├── database.py         database connection, UTC datetime type
+│   │   ├── models.py           Lead, Discussion tables
+│   │   ├── schemas.py          request/response shapes and validation
+│   │   ├── crud.py             database operations and the follow-up rule
+│   │   └── routers/leads.py    all /api/leads endpoints
+│   ├── tests/                  pytest suite
+│   ├── seed.py                 demo data (--reset to start over)
+│   ├── requirements.txt        pinned Python dependencies
+│   └── Dockerfile
+├── frontend/                   Next.js web app
+│   ├── app/                    layout (fonts), page (the one screen), brand styles, favicon
+│   ├── components/             LeadList, LeadCard, LeadDialog, Timeline, NoteForm,
+│   │                           AddLeadDialog, FilterChips, SearchBar, Dialog, ...
+│   ├── lib/                    api.ts, time.ts (+ tests), status.ts, types.ts
+│   └── Dockerfile
+├── leadflow-brand-kit/         design system the UI follows (tokens, logos, icons, rules)
+├── docs/
+│   ├── TESTING.md              manual test plan
+│   ├── AI_USAGE.md             how AI was used, phase by phase
+│   └── screenshots/
+├── .github/workflows/ci.yml    CI
+├── docker-compose.yml
+└── .env.example
+```
+
+## Design decisions
+
+- **SQLite locally, PostgreSQL in Docker**: zero setup for development and tests, a real server database in Compose; only `DATABASE_URL` changes.
+- **Overdue leads stay in "All leads"** (at the top) instead of a third section, matching the brand kit and wireframes.
+- **Search runs in the browser**: all leads are already loaded for the filter counts, so it is instant and the counts always match. The API supports `?search=` and `?status=` too.
+- **Native `<dialog>`**: focus trapping, Esc and the backdrop come from the browser, with no UI library.
+- **No state library**: React state plus one small API client is enough for one screen.
+
+## How AI was used
+
+Built with **Claude Code** as a pair programmer, phase by phase from a written plan: tests first on the backend, current library docs checked before writing code, two reviews by a separate reviewer agent, and every flow verified in a real browser. What the AI generated, what I decided or changed, and every mistake it made and how it was fixed are in **[`docs/AI_USAGE.md`](docs/AI_USAGE.md)**.
+
+## Limitations and ideas
+
+- No login (optional in the brief). Next step: email/password login with a JWT.
+- The list loads all leads at once: fine for a rep's few hundred leads; larger lists would need pagination.
 - Tables are created on startup; a growing schema would need migrations (Alembic).
-- The seed's "today" uses the server's timezone (`TZ` in Docker).
-- Ideas that fit PravarAI: an **AI summary** of a lead's discussion history, a **suggested next action** and follow-up time from the latest notes, and a daily digest of today's and overdue follow-ups.
+- Ideas that fit PravarAI: an **AI summary** of a lead's discussions, a **suggested next action** and follow-up time from the latest notes, and a daily digest of today's and overdue follow-ups.
 
-## 12. Credit
+## Credits
 
-The visual design follows the LeadFlow brand kit in [`leadflow-brand-kit/`](leadflow-brand-kit/) (colours, typography, icons, component rules). The wireframes in the assessment brief were used as layout reference.
+The interface follows the **LeadFlow brand kit** in [`leadflow-brand-kit/`](leadflow-brand-kit/): colours, typography (Plus Jakarta Sans, JetBrains Mono), icons and component rules. Layout inspired by the wireframes in the PravarAI assessment brief.
