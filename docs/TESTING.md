@@ -18,6 +18,14 @@ Commands are for **Windows PowerShell**, run from the project folder `C:\Users\C
 
 Use **one** of these two ways. Stages 1 and 2 work with either.
 
+> **Never run Option A and Option B at the same time.** Windows lets both APIs listen on port 8000 (one on IPv4, one on IPv6), so some requests silently go to the other one and the results get mixed up. Before starting, check that nothing is already using the ports:
+>
+> ```powershell
+> Get-NetTCPConnection -LocalPort 8000,3000 -State Listen -ErrorAction SilentlyContinue
+> ```
+>
+> No output means the ports are free. If something is listed, stop it first: Ctrl+C in the terminal running `uvicorn` / `npm run dev`, or `docker compose down`.
+
 ### Option A: without Docker (two terminals)
 
 Terminal 1, the API with fresh demo data:
@@ -372,7 +380,7 @@ Put the mouse aside.
 
 - [ ] **T3.21 Dark mode.** Windows Settings > Personalization > Colors > **Dark**. Expected: the app switches to dark colours by itself (no reload needed or after F5); text stays readable; overdue still red. Switch back afterwards.
 - [ ] **T3.22 Mobile.** Press **F12**, then the phone icon (Ctrl+Shift+M), choose a phone like iPhone 12 (390 px). Expected: filter chips wrap onto extra lines, no sideways scrolling, cards and dialogs fit the screen, dialog content scrolls inside.
-- [ ] **T3.23 Time keeps moving.** Leave the page open for 2 minutes after adding a note. Expected: `just now` changes to `2 minutes ago` without reloading.
+- [ ] **T3.23 Time keeps moving.** Leave the page open for 2 minutes after adding a note. Expected: `just now` changes to `1 minute ago` or `2 minutes ago` without reloading (the page refreshes times once a minute).
 - [ ] **T3.24 Timezone (optional).** Windows Settings > Time & language > Date & time > turn off automatic time zone, pick a different one (e.g. London), reload. Expected: all times shift to the new zone and the follow-up sections recalculate. Set it back to India afterwards.
 
 ### 3.6 Docker (full stack with PostgreSQL)
