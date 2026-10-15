@@ -171,6 +171,8 @@ docker-compose.yml, .env.example, .github/workflows/ci.yml
 
 ## 9. Running tests
 
+A full manual test plan (low level, high level, edge cases, Docker) with copy-ready commands is in [`docs/TESTING.md`](docs/TESTING.md).
+
 ```bash
 cd backend
 uv run pytest            # 35 tests: every endpoint, status codes, validation, follow-up rule, seed
